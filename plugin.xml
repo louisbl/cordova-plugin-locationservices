@@ -27,8 +27,10 @@ xmlns:android="http://schemas.android.com/apk/res/android"
     <description>Android native Geolocation Plugin</description>
     <license>Apache 2.0</license>
     <keywords>cordova,geolocation</keywords>
-    <repo>https://git-wip-us.apache.org/repos/asf/cordova-plugin-geolocation.git</repo>
-    <issue>https://issues.apache.org/jira/browse/CB/component/12320638</issue>
+    <repo>https://github.com/louisbl/cordova-native-geolocation</repo>
+    <issue>https://github.com/louisbl/cordova-native-geolocation/issues</issue>
+
+   <dependency id="com.google.playservices" />
 
     <!-- android -->
     <platform name="android">
@@ -51,7 +53,7 @@ xmlns:android="http://schemas.android.com/apk/res/android"
 
         <config-file target="res/xml/config.xml" parent="/*">
             <feature name="Geolocation">
-                <param name="android-package" value="org.apache.cordova.geolocation.GeoBroker"/>
+                <param name="android-package" value="fr.louisbl.cordova.nativegeolocation.GeoBroker"/>
             </feature>
         </config-file>
 
@@ -60,10 +62,10 @@ xmlns:android="http://schemas.android.com/apk/res/android"
             <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
         </config-file>
 
-        <source-file src="src/android/GeoBroker.java" target-dir="src/org/apache/cordova/geolocation" />
-        <source-file src="src/android/GPSListener.java" target-dir="src/org/apache/cordova/geolocation" />
-        <source-file src="src/android/NetworkListener.java" target-dir="src/org/apache/cordova/geolocation" />
-        <source-file src="src/android/CordovaLocationListener.java" target-dir="src/org/apache/cordova/geolocation" />
+        <source-file src="src/android/GeoBroker.java" target-dir="src/fr/louisbl/cordova/nativegeolocation" />
+        <source-file src="src/android/CordovaLocationListener.java" target-dir="src/fr/louisbl/cordova/nativegeolocation" />
+        <source-file src="src/android/LocationUtils.java" target-dir="src/fr/louisbl/cordova/nativegeolocation" />
+        <source-file src="src/android/LocationServiceErrorMessages.java" target-dir="src/fr/louisbl/cordova/nativegeolocation" />
 
     </platform>
 </plugin>

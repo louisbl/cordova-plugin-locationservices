@@ -16,7 +16,11 @@
        specific language governing permissions and limitations
        under the License.
 */
-package org.apache.cordova.geolocation;
+package fr.louisbl.cordova.nativegeolocation;
+
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationClient;
+import com.google.android.gms.location.LocationRequest;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -27,9 +31,6 @@ import java.util.TimerTask;
 
 import org.apache.cordova.CallbackContext;
 
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -38,19 +39,30 @@ public class CordovaLocationListener implements LocationListener {
     public static int POSITION_UNAVAILABLE = 2;
     public static int TIMEOUT = 3;
 
-    protected LocationManager locationManager;
+    private LocationClient mClient;
+    private LocationRequest mLocationRequest;
     private GeoBroker owner;
     protected boolean running = false;
 
     public HashMap<String, CallbackContext> watches = new HashMap<String, CallbackContext>();
     private List<CallbackContext> callbacks = new ArrayList<CallbackContext>();
-    
+
     private Timer timer = null;
 
     private String TAG = "[Cordova Location Listener]";
 
-    public CordovaLocationListener(LocationManager manager, GeoBroker broker, String tag) {
-        this.locationManager = manager;
+    public CordovaLocationListener(LocationClient client, GeoBroker broker, String tag) {
+        // Create a new global location parameters object
+        mLocationRequest = LocationRequest.create();
+        mLocationRequest.setInterval(LocationUtils.UPDATE_INTERVAL_IN_MILLISECONDS);
+
+        // Use high accuracy
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+
+        // Set the interval ceiling to one minute
+        mLocationRequest.setFastestInterval(LocationUtils.FAST_INTERVAL_CEILING_IN_MILLISECONDS);
+
+        mClient = client;
         this.owner = broker;
         this.TAG = tag;
     }
@@ -61,7 +73,7 @@ public class CordovaLocationListener implements LocationListener {
         {
             this.owner.fail(code, message, callbackContext, false);
         }
-        if(this.owner.isGlobalListener(this) && this.watches.size() == 0)
+        if(this.watches.size() == 0)
         {
         	Log.d(TAG, "Stopping global listener");
         	this.stop();
@@ -80,7 +92,7 @@ public class CordovaLocationListener implements LocationListener {
         {
             this.owner.win(loc, callbackContext, false);
         }
-        if(this.owner.isGlobalListener(this) && this.watches.size() == 0)
+        if(this.watches.size() == 0)
         {
         	Log.d(TAG, "Stopping global listener");
         	this.stop();
@@ -96,48 +108,6 @@ public class CordovaLocationListener implements LocationListener {
     /**
      * Location Listener Methods
      */
-
-    /**
-     * Called when the provider is disabled by the user.
-     *
-     * @param provider
-     */
-    public void onProviderDisabled(String provider) {
-        Log.d(TAG, "Location provider '" + provider + "' disabled.");
-        this.fail(POSITION_UNAVAILABLE, "GPS provider disabled.");
-    }
-
-    /**
-     * Called when the provider is enabled by the user.
-     *
-     * @param provider
-     */
-    public void onProviderEnabled(String provider) {
-        Log.d(TAG, "Location provider "+ provider + " has been enabled");
-    }
-
-    /**
-     * Called when the provider status changes. This method is called when a
-     * provider is unable to fetch a location or if the provider has recently
-     * become available after a period of unavailability.
-     *
-     * @param provider
-     * @param status
-     * @param extras
-     */
-    public void onStatusChanged(String provider, int status, Bundle extras) {
-        Log.d(TAG, "The status of the provider " + provider + " has changed");
-        if (status == 0) {
-            Log.d(TAG, provider + " is OUT OF SERVICE");
-            this.fail(CordovaLocationListener.POSITION_UNAVAILABLE, "Provider " + provider + " is out of service.");
-        }
-        else if (status == 1) {
-            Log.d(TAG, provider + " is TEMPORARILY_UNAVAILABLE");
-        }
-        else {
-            Log.d(TAG, provider + " is AVAILABLE");
-        }
-    }
 
     /**
      * Called when the location has changed.
@@ -166,7 +136,7 @@ public class CordovaLocationListener implements LocationListener {
     		this.timer = new Timer();
     	}
     	this.timer.schedule(new LocationTimeoutTask(callbackContext, this), timeout);
-        this.callbacks.add(callbackContext);        
+        this.callbacks.add(callbackContext);
         if (this.size() == 1) {
             this.start();
         }
@@ -183,7 +153,7 @@ public class CordovaLocationListener implements LocationListener {
     /**
      * Destroy listener.
      */
-    public void destroy() {    	
+    public void destroy() {
         this.stop();
     }
 
@@ -196,12 +166,8 @@ public class CordovaLocationListener implements LocationListener {
      */
     protected void start() {
         if (!this.running) {
-            if (this.locationManager.getProvider(LocationManager.NETWORK_PROVIDER) != null) {
-                this.running = true;
-                this.locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 60000, 10, this);
-            } else {
-                this.fail(CordovaLocationListener.POSITION_UNAVAILABLE, "Network provider is not available.");
-            }
+            this.running = true;
+            mClient.requestLocationUpdates(mLocationRequest, this);
         }
     }
 
@@ -211,11 +177,12 @@ public class CordovaLocationListener implements LocationListener {
     private void stop() {
     	this.cancelTimer();
         if (this.running) {
-            this.locationManager.removeUpdates(this);
+            mClient.removeLocationUpdates(this);
+            mClient.disconnect();
             this.running = false;
         }
     }
-    
+
     private void cancelTimer() {
     	if(this.timer != null) {
     		this.timer.cancel();
@@ -223,12 +190,12 @@ public class CordovaLocationListener implements LocationListener {
         	this.timer = null;
     	}
     }
-    
+
     private class LocationTimeoutTask extends TimerTask {
-    	
+
     	private CallbackContext callbackContext = null;
     	private CordovaLocationListener listener = null;
-    	
+
     	public LocationTimeoutTask(CallbackContext callbackContext, CordovaLocationListener listener) {
     		this.callbackContext = callbackContext;
     		this.listener = listener;
@@ -242,10 +209,10 @@ public class CordovaLocationListener implements LocationListener {
 					break;
 				}
 			}
-			
+
 			if(listener.size() == 0) {
 				listener.stop();
 			}
-		}    	
+		}
     }
 }
