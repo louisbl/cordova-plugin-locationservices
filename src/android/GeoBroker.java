@@ -18,43 +18,31 @@
 */
 package fr.louisbl.cordova.nativegeolocation;
 
+import android.app.Activity;
+import android.app.Dialog;
+import android.app.DialogFragment;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentSender;
+import android.location.Location;
+import android.location.LocationManager;
+import android.os.Bundle;
+import android.util.Log;
+
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.location.LocationClient;
-
-import android.content.IntentSender;
-import android.location.Address;
-import android.location.Geocoder;
-import android.location.Location;
-import android.os.AsyncTask;
-import android.os.Build;
-import android.os.Bundle;
-import android.annotation.SuppressLint;
-import android.app.Activity;
-import android.app.Dialog;
-import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.FragmentActivity;
-import android.util.Log;
-import android.view.View;
-import android.widget.ProgressBar;
-import android.widget.TextView;
-import android.widget.Toast;
+import com.google.android.gms.location.LocationRequest;
 
 import org.apache.cordova.CallbackContext;
+import org.apache.cordova.CordovaInterface;
 import org.apache.cordova.CordovaPlugin;
+import org.apache.cordova.CordovaWebView;
 import org.apache.cordova.PluginResult;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.Locale;
 
 /*
  * This class is the interface to the Geolocation.  It's bound to the geo object.
@@ -71,8 +59,10 @@ public class GeoBroker extends CordovaPlugin implements
 
     // Stores the current instantiation of the location client in this object
     private LocationClient mLocationClient;
-
     private CordovaLocationListener mListener;
+    private boolean wantLastLocation = false;
+    private JSONArray prevArgs;
+    private CallbackContext cbContext;
 
     @Override
     public void initialize(CordovaInterface cordova, CordovaWebView webView) {
@@ -120,26 +110,29 @@ public class GeoBroker extends CordovaPlugin implements
      * @return True if the action was valid, or false if not.
      */
     public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
+        if (isGPSdisabled()) {
+            PluginResult.Status status = PluginResult.Status.ERROR;
+            String message = "GPS is disabled on this device.";
+            PluginResult result = new PluginResult(status, message);
+            callbackContext.sendPluginResult(result);
+
+            return true;
+        }
+
         if (servicesConnected()) {
             if (mLocationClient == null) {
                 create();
             }
             if (action.equals("getLocation")) {
-                boolean enableHighAccuracy = args.getBoolean(0);
-                int maximumAge = args.getInt(1);
-
-                Location last = mLocationClient.getLastLocation();
-                // Check if we can use lastKnownLocation to get a quick reading and use less battery
-                if (last != null && (System.currentTimeMillis() - last.getTime()) <= maximumAge) {
-                    PluginResult result = new PluginResult(PluginResult.Status.OK, this.returnLocationJSON(last));
-                    callbackContext.sendPluginResult(result);
+                if (mLocationClient.isConnected()) {
+                    getLastLocation(args, callbackContext);
                 } else {
-                    this.getCurrentLocation(callbackContext, enableHighAccuracy, args.optInt(2, 60000));
+                    setWantLastLocation(args, callbackContext);
                 }
             } else if (action.equals("addWatch")) {
                 String id = args.getString(0);
                 boolean enableHighAccuracy = args.getBoolean(1);
-                this.addWatch(id, callbackContext, enableHighAccuracy);
+                this.addWatch(id, callbackContext);
             } else if (action.equals("clearWatch")) {
                 String id = args.getString(0);
                 this.clearWatch(id);
@@ -147,7 +140,7 @@ public class GeoBroker extends CordovaPlugin implements
                 return false;
             }
         } else {
-            PluginResult.Status status = PluginResult.Status.NO_RESULT;
+            PluginResult.Status status = PluginResult.Status.ERROR;
             String message = "Google Play Services is not available for this device.";
             PluginResult result = new PluginResult(status, message);
             callbackContext.sendPluginResult(result);
@@ -155,24 +148,67 @@ public class GeoBroker extends CordovaPlugin implements
         return true;
     }
 
+    private boolean isGPSdisabled() {
+        LocationManager lm = null;
+        boolean gps_enabled;
+        if (lm == null)
+            lm = (LocationManager) this.cordova.getActivity().getSystemService(Context.LOCATION_SERVICE);
+        try {
+            gps_enabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
+            Log.d(LocationUtils.APPTAG, "GPS enabled: " + gps_enabled);
+        } catch(Exception ex){
+            ex.printStackTrace();
+            gps_enabled = false;
+        }
+
+        return !gps_enabled;
+    }
+
+    private void getLastLocation() {
+        try {
+            getLastLocation(prevArgs, cbContext);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        } finally {
+            cbContext = null;
+            prevArgs = null;
+        }
+    }
+
+    private void getLastLocation(JSONArray args, CallbackContext callbackContext) throws JSONException {
+        int maximumAge = args.getInt(1);
+        Log.d(LocationUtils.APPTAG, "Maximum age: " + maximumAge);
+        Location last = mLocationClient.getLastLocation();
+        // Check if we can use lastKnownLocation to get a quick reading and use less battery
+        if (last != null && (System.currentTimeMillis() - last.getTime()) <= maximumAge) {
+            PluginResult result = new PluginResult(PluginResult.Status.OK, returnLocationJSON(last));
+            callbackContext.sendPluginResult(result);
+        } else {
+            getCurrentLocation(callbackContext, args.optInt(2, 60000));
+        }
+    }
+
+    private void setWantLastLocation(JSONArray args, CallbackContext callbackContext) {
+        prevArgs = args;
+        cbContext = callbackContext;
+        wantLastLocation = true;
+    }
+
     private void clearWatch(String id) {
         getListener().clearWatch(id);
     }
 
-    private void getCurrentLocation(CallbackContext callbackContext, boolean enableHighAccuracy, int timeout) {
+    private void getCurrentLocation(CallbackContext callbackContext, int timeout) {
         getListener().addCallback(callbackContext, timeout);
     }
 
-    private void addWatch(String timerId, CallbackContext callbackContext, boolean enableHighAccuracy) {
+    private void addWatch(String timerId, CallbackContext callbackContext) {
         getListener().addWatch(timerId, callbackContext);
     }
 
-    private void getListener() {
+    private CordovaLocationListener getListener() {
         if (mListener == null) {
-            mListener = new CordovaLocationListener(mLocationClient, this);
-            if (!mLocationClient.isConnected() && !mLocationClient.isConnecting()) {
-                mLocationClient.connect();
-            }
+            mListener = new CordovaLocationListener(mLocationClient, this, LocationUtils.APPTAG);
         }
         return mListener;
     }
@@ -182,15 +218,13 @@ public class GeoBroker extends CordovaPlugin implements
      * Stop listener.
      */
     public void onDestroy() {
-        if (mLocationClient == null) {
-            return;
+        if (mListener != null) {
+            mListener.destroy();
         }
-        // If the client is connected
-        if (mLocationClient.isConnected()) {
-            stopUpdates();
+        if (mLocationClient != null) {
+            // After disconnect() is called, the client is considered "dead".
+            mLocationClient.disconnect();
         }
-        // After disconnect() is called, the client is considered "dead".
-        mLocationClient.disconnect();
     }
 
     /**
@@ -213,7 +247,6 @@ public class GeoBroker extends CordovaPlugin implements
             o.put("velocity", loc.getSpeed());
             o.put("timestamp", loc.getTime());
         } catch (JSONException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
 
@@ -260,6 +293,9 @@ public class GeoBroker extends CordovaPlugin implements
          * handle callbacks.
          */
         mLocationClient = new LocationClient(this.cordova.getActivity(), this, this);
+        if (!mLocationClient.isConnected() && !mLocationClient.isConnecting()) {
+            mLocationClient.connect();
+        }
     }
 
     /**
@@ -287,7 +323,7 @@ public class GeoBroker extends CordovaPlugin implements
             if (dialog != null) {
                 ErrorDialogFragment errorFragment = new ErrorDialogFragment();
                 errorFragment.setDialog(dialog);
-                errorFragment.show(this.cordova.getActivity().getSupportFragmentManager(), LocationUtils.APPTAG);
+                errorFragment.show(this.cordova.getActivity().getFragmentManager(), LocationUtils.APPTAG);
             }
             return false;
         }
@@ -301,6 +337,10 @@ public class GeoBroker extends CordovaPlugin implements
     @Override
     public void onConnected(Bundle bundle) {
         Log.d(LocationUtils.APPTAG, "Location Services connected");
+        if (wantLastLocation) {
+            wantLastLocation = false;
+            getLastLocation();
+        }
         if (mListener != null) {
             mListener.start();
         }
@@ -377,7 +417,7 @@ public class GeoBroker extends CordovaPlugin implements
             errorFragment.setDialog(errorDialog);
 
             // Show the error dialog in the DialogFragment
-            errorFragment.show(getSupportFragmentManager(), LocationUtils.APPTAG);
+            errorFragment.show(this.cordova.getActivity().getFragmentManager(), LocationUtils.APPTAG);
         }
     }
 

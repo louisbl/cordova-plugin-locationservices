@@ -18,9 +18,14 @@
 */
 package fr.louisbl.cordova.nativegeolocation;
 
-import com.google.android.gms.location.LocationListener;
+import android.location.Location;
+import android.util.Log;
+
 import com.google.android.gms.location.LocationClient;
+import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
+
+import org.apache.cordova.CallbackContext;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,11 +33,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
-
-import org.apache.cordova.CallbackContext;
-
-import android.os.Bundle;
-import android.util.Log;
 
 public class CordovaLocationListener implements LocationListener {
     public static int PERMISSION_DENIED = 1;
@@ -68,15 +68,13 @@ public class CordovaLocationListener implements LocationListener {
     }
 
     protected void fail(int code, String message) {
-    	this.cancelTimer();
-        for (CallbackContext callbackContext: this.callbacks)
-        {
+        this.cancelTimer();
+        for (CallbackContext callbackContext : this.callbacks) {
             this.owner.fail(code, message, callbackContext, false);
         }
-        if(this.watches.size() == 0)
-        {
-        	Log.d(TAG, "Stopping global listener");
-        	this.stop();
+        if (this.watches.size() == 0) {
+            Log.d(TAG, "Stopping global listener");
+            this.stop();
         }
         this.callbacks.clear();
 
@@ -87,15 +85,13 @@ public class CordovaLocationListener implements LocationListener {
     }
 
     private void win(Location loc) {
-    	this.cancelTimer();
-        for (CallbackContext callbackContext: this.callbacks)
-        {
+        this.cancelTimer();
+        for (CallbackContext callbackContext : this.callbacks) {
             this.owner.win(loc, callbackContext, false);
         }
-        if(this.watches.size() == 0)
-        {
-        	Log.d(TAG, "Stopping global listener");
-        	this.stop();
+        if (this.watches.size() == 0) {
+            Log.d(TAG, "Stopping global listener");
+            this.stop();
         }
         this.callbacks.clear();
 
@@ -114,6 +110,7 @@ public class CordovaLocationListener implements LocationListener {
      *
      * @param location
      */
+    @Override
     public void onLocationChanged(Location location) {
         Log.d(TAG, "The location has been updated!");
         this.win(location);
@@ -131,16 +128,19 @@ public class CordovaLocationListener implements LocationListener {
             this.start();
         }
     }
+
     public void addCallback(CallbackContext callbackContext, int timeout) {
-    	if(this.timer == null) {
-    		this.timer = new Timer();
-    	}
-    	this.timer.schedule(new LocationTimeoutTask(callbackContext, this), timeout);
+        Log.d(TAG, "addCallback with timeout: " + timeout);
+        if (this.timer == null) {
+            this.timer = new Timer();
+        }
+        this.timer.schedule(new LocationTimeoutTask(callbackContext, this), timeout);
         this.callbacks.add(callbackContext);
         if (this.size() == 1) {
             this.start();
         }
     }
+
     public void clearWatch(String timerId) {
         if (this.watches.containsKey(timerId)) {
             this.watches.remove(timerId);
@@ -157,16 +157,11 @@ public class CordovaLocationListener implements LocationListener {
         this.stop();
     }
 
-    // LOCAL
-
-    /**
-     * Start requesting location updates.
-     *
-     * @param interval
-     */
     protected void start() {
+        Log.d(TAG, "start!");
         if (!this.running) {
             this.running = true;
+            Log.d(TAG, "requestLocationUpdates started");
             mClient.requestLocationUpdates(mLocationRequest, this);
         }
     }
@@ -175,7 +170,8 @@ public class CordovaLocationListener implements LocationListener {
      * Stop receiving location updates.
      */
     private void stop() {
-    	this.cancelTimer();
+        Log.d(TAG, "stop!");
+        this.cancelTimer();
         if (this.running) {
             mClient.removeLocationUpdates(this);
             mClient.disconnect();
@@ -184,35 +180,37 @@ public class CordovaLocationListener implements LocationListener {
     }
 
     private void cancelTimer() {
-    	if(this.timer != null) {
-    		this.timer.cancel();
-        	this.timer.purge();
-        	this.timer = null;
-    	}
+        if (this.timer != null) {
+            this.timer.cancel();
+            this.timer.purge();
+            this.timer = null;
+        }
     }
 
     private class LocationTimeoutTask extends TimerTask {
 
-    	private CallbackContext callbackContext = null;
-    	private CordovaLocationListener listener = null;
+        private CallbackContext callbackContext = null;
+        private CordovaLocationListener listener = null;
 
-    	public LocationTimeoutTask(CallbackContext callbackContext, CordovaLocationListener listener) {
-    		this.callbackContext = callbackContext;
-    		this.listener = listener;
-    	}
+        public LocationTimeoutTask(CallbackContext callbackContext, CordovaLocationListener listener) {
+            this.callbackContext = callbackContext;
+            this.listener = listener;
+        }
 
-		@Override
-		public void run() {
-			for (CallbackContext callbackContext: listener.callbacks) {
-				if(this.callbackContext == callbackContext) {
-					listener.callbacks.remove(callbackContext);
-					break;
-				}
-			}
+        @Override
+        public void run() {
+            Log.d(TAG, "LocationTimeoutTask#run");
+            listener.fail(TIMEOUT, "Unable to retrieve position");
+            for (CallbackContext callbackContext : listener.callbacks) {
+                if (this.callbackContext == callbackContext) {
+                    listener.callbacks.remove(callbackContext);
+                    break;
+                }
+            }
 
-			if(listener.size() == 0) {
-				listener.stop();
-			}
-		}
+            if (listener.size() == 0) {
+                listener.stop();
+            }
+        }
     }
 }
