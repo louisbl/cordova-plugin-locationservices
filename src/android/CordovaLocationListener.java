@@ -176,7 +176,7 @@ public class CordovaLocationListener implements LocationListener {
         Log.d(TAG, "stop!");
         this.cancelTimer();
         if (this.running) {
-            if (mClient.isConnected()) {
+            if (mClient != null && mClient.isConnected()) {
                 mClient.removeLocationUpdates(this);
                 mClient.disconnect();
             }

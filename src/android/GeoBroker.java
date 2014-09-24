@@ -111,6 +111,13 @@ public class GeoBroker extends CordovaPlugin implements
      * @return True if the action was valid, or false if not.
      */
     public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
+        if (action.equals("clearWatch")) {
+            String id = args.getString(0);
+            this.clearWatch(id);
+
+            return true;
+        }
+
         if (isGPSdisabled()) {
             PluginResult.Status status = PluginResult.Status.ERROR;
             String message = "GPS is disabled on this device.";
@@ -137,9 +144,6 @@ public class GeoBroker extends CordovaPlugin implements
                 String id = args.getString(0);
                 wantUpdates = true;
                 this.addWatch(id, callbackContext);
-            } else if (action.equals("clearWatch")) {
-                String id = args.getString(0);
-                this.clearWatch(id);
             } else {
                 return false;
             }
