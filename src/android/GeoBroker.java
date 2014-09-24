@@ -61,6 +61,7 @@ public class GeoBroker extends CordovaPlugin implements
     private LocationClient mLocationClient;
     private CordovaLocationListener mListener;
     private boolean wantLastLocation = false;
+    private boolean wantUpdates = false;
     private JSONArray prevArgs;
     private CallbackContext cbContext;
 
@@ -123,6 +124,9 @@ public class GeoBroker extends CordovaPlugin implements
             if (mLocationClient == null) {
                 create();
             }
+            if (!mLocationClient.isConnected() && !mLocationClient.isConnecting()) {
+                mLocationClient.connect();
+            }
             if (action.equals("getLocation")) {
                 if (mLocationClient.isConnected()) {
                     getLastLocation(args, callbackContext);
@@ -131,7 +135,7 @@ public class GeoBroker extends CordovaPlugin implements
                 }
             } else if (action.equals("addWatch")) {
                 String id = args.getString(0);
-                boolean enableHighAccuracy = args.getBoolean(1);
+                wantUpdates = true;
                 this.addWatch(id, callbackContext);
             } else if (action.equals("clearWatch")) {
                 String id = args.getString(0);
@@ -221,7 +225,7 @@ public class GeoBroker extends CordovaPlugin implements
         if (mListener != null) {
             mListener.destroy();
         }
-        if (mLocationClient != null) {
+        if (mLocationClient != null && mLocationClient.isConnected()) {
             // After disconnect() is called, the client is considered "dead".
             mLocationClient.disconnect();
         }
@@ -293,9 +297,6 @@ public class GeoBroker extends CordovaPlugin implements
          * handle callbacks.
          */
         mLocationClient = new LocationClient(this.cordova.getActivity(), this, this);
-        if (!mLocationClient.isConnected() && !mLocationClient.isConnecting()) {
-            mLocationClient.connect();
-        }
     }
 
     /**
@@ -341,7 +342,8 @@ public class GeoBroker extends CordovaPlugin implements
             wantLastLocation = false;
             getLastLocation();
         }
-        if (mListener != null) {
+        if (mListener != null && wantUpdates) {
+            wantUpdates = false;
             mListener.start();
         }
     }

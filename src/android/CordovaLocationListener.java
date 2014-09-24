@@ -158,12 +158,13 @@ public class CordovaLocationListener implements LocationListener {
     }
 
     protected void start() {
-        Log.d(TAG, "start!");
+        Log.d(TAG, "try to start: " + mClient.isConnected());
         if (mClient.isConnected()) {
+            Log.d(TAG, "already running? " + this.running);
             if (!this.running) {
                 this.running = true;
                 Log.d(TAG, "requestLocationUpdates started");
-                    mClient.requestLocationUpdates(mLocationRequest, this);
+                mClient.requestLocationUpdates(mLocationRequest, this);
             }
         }
     }
