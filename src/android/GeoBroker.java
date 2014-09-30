@@ -128,14 +128,11 @@ public class GeoBroker extends CordovaPlugin implements
         }
 
         if (servicesConnected()) {
-            if (mLocationClient == null) {
-                create();
-            }
-            if (!mLocationClient.isConnected() && !mLocationClient.isConnecting()) {
-                mLocationClient.connect();
+            if (!getLocationClient().isConnected() && !getLocationClient().isConnecting()) {
+                getLocationClient().connect();
             }
             if (action.equals("getLocation")) {
-                if (mLocationClient.isConnected()) {
+                if (getLocationClient().isConnected()) {
                     getLastLocation(args, callbackContext);
                 } else {
                     setWantLastLocation(args, callbackContext);
@@ -216,7 +213,7 @@ public class GeoBroker extends CordovaPlugin implements
 
     private CordovaLocationListener getListener() {
         if (mListener == null) {
-            mListener = new CordovaLocationListener(mLocationClient, this, LocationUtils.APPTAG);
+            mListener = new CordovaLocationListener(getLocationClient(), this, LocationUtils.APPTAG);
         }
         return mListener;
     }
@@ -229,9 +226,9 @@ public class GeoBroker extends CordovaPlugin implements
         if (mListener != null) {
             mListener.destroy();
         }
-        if (mLocationClient != null && mLocationClient.isConnected()) {
+        if (getLocationClient().isConnected()) {
             // After disconnect() is called, the client is considered "dead".
-            mLocationClient.disconnect();
+            getLocationClient().disconnect();
         }
     }
 
@@ -295,12 +292,15 @@ public class GeoBroker extends CordovaPlugin implements
         callbackContext.sendPluginResult(result);
     }
 
-    private void create() {
+    private LocationClient getLocationClient() {
         /*
          * Create a new location client, using the enclosing class to
          * handle callbacks.
          */
-        mLocationClient = new LocationClient(this.cordova.getActivity(), this, this);
+        if (mLocationClient == null) {
+            mLocationClient = new LocationClient(this.cordova.getActivity(), this, this);
+        }
+        return mLocationClient
     }
 
     /**
