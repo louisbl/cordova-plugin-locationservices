@@ -300,7 +300,7 @@ public class GeoBroker extends CordovaPlugin implements
         if (mLocationClient == null) {
             mLocationClient = new LocationClient(this.cordova.getActivity(), this, this);
         }
-        return mLocationClient
+        return mLocationClient;
     }
 
     /**
