@@ -16,9 +16,6 @@
 
 package fr.louisbl.cordova.nativegeolocation;
 
-import android.content.Context;
-import android.location.Location;
-
 /**
  * Defines app-wide constants and utilities
  */
@@ -40,14 +37,11 @@ public final class LocationUtils {
 
     // The update interval
     public static final int UPDATE_INTERVAL_IN_SECONDS = 5;
-
-    // A fast interval ceiling
-    public static final int FAST_CEILING_IN_SECONDS = 2;
-
     // Update interval in milliseconds
     public static final long UPDATE_INTERVAL_IN_MILLISECONDS =
             MILLISECONDS_PER_SECOND * UPDATE_INTERVAL_IN_SECONDS;
-
+    // A fast interval ceiling
+    public static final int FAST_CEILING_IN_SECONDS = 2;
     // A fast ceiling of update intervals, used when the app is visible
     public static final long FAST_INTERVAL_CEILING_IN_MILLISECONDS =
             MILLISECONDS_PER_SECOND * FAST_CEILING_IN_SECONDS;

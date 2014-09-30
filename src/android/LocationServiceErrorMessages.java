@@ -16,9 +16,9 @@
 
 package fr.louisbl.cordova.nativegeolocation;
 
-import com.google.android.gms.common.ConnectionResult;
 import android.content.Context;
-import android.content.res.Resources;
+
+import com.google.android.gms.common.ConnectionResult;
 
 /**
  * Map error codes to error messages.
@@ -26,7 +26,8 @@ import android.content.res.Resources;
 public class LocationServiceErrorMessages {
 
     // Don't allow instantiation
-    private LocationServiceErrorMessages() {}
+    private LocationServiceErrorMessages() {
+    }
 
     public static String getErrorString(Context context, int errorCode) {
 
