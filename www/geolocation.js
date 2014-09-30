@@ -167,7 +167,7 @@ var geolocation = {
                 // always truthy before we call into native
                 timeoutTimer.timer = true;
             }
-            exec(win, fail, "Geolocation", "getLocation", [options.enableHighAccuracy, options.maximumAge]);
+            exec(win, fail, "Geolocation", "getLocation", [options.maximumAge, options.enableHighAccuracy]);
         }
         return timeoutTimer;
     },

@@ -152,9 +152,9 @@ public class GeoBroker extends CordovaPlugin implements
                 }
             } else if (action.equals("addWatch")) {
                 String id = args.getString(0);
-                int priority = args.getInt(1);
-                long interval = args.getLong(2);
-                long fastInterval = args.getLong(3);
+                int priority = args.getInt(2);
+                long interval = args.getLong(3);
+                long fastInterval = args.getLong(4);
                 getListener().setLocationRequestParams(priority, interval, fastInterval);
                 mWantUpdates = true;
                 this.addWatch(id, callbackContext);
@@ -251,7 +251,6 @@ public class GeoBroker extends CordovaPlugin implements
             lm = (LocationManager) this.cordova.getActivity().getSystemService(Context.LOCATION_SERVICE);
         try {
             gps_enabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
-            Log.d(LocationUtils.APPTAG, "GPS enabled: " + gps_enabled);
         } catch (Exception ex) {
             ex.printStackTrace();
             gps_enabled = false;
@@ -272,15 +271,14 @@ public class GeoBroker extends CordovaPlugin implements
     }
 
     private void getLastLocation(JSONArray args, CallbackContext callbackContext) throws JSONException {
-        int maximumAge = args.getInt(1);
-        Log.d(LocationUtils.APPTAG, "Maximum age: " + maximumAge);
+        int maximumAge = args.getInt(0);
         Location last = mLocationClient.getLastLocation();
         // Check if we can use lastKnownLocation to get a quick reading and use less battery
         if (last != null && (System.currentTimeMillis() - last.getTime()) <= maximumAge) {
             PluginResult result = new PluginResult(PluginResult.Status.OK, returnLocationJSON(last));
             callbackContext.sendPluginResult(result);
         } else {
-            getCurrentLocation(callbackContext, args.optInt(2, 60000));
+            getCurrentLocation(callbackContext, Integer.MAX_VALUE);
         }
     }
 

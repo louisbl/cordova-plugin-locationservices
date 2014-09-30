@@ -201,7 +201,7 @@ public class CordovaLocationListener implements LocationListener {
 
         @Override
         public void run() {
-            mListener.fail(TIMEOUT, "Unable to retrieve position");
+            // mListener.fail(TIMEOUT, "Unable to retrieve position");
 
             for (CallbackContext callbackContext : mListener.mCallbacks) {
                 if (mCallbackContext == callbackContext) {
