@@ -52,12 +52,11 @@ public class CordovaLocationListener implements LocationListener {
     public CordovaLocationListener(LocationClient client, GeoBroker broker, String tag) {
         // Create a new global location parameters object
         mLocationRequest = LocationRequest.create();
+        // Set the average interval to 6 seconds
         mLocationRequest.setInterval(LocationUtils.UPDATE_INTERVAL_IN_MILLISECONDS);
-
         // Use high accuracy
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-
-        // Set the interval ceiling to one minute
+        // Set the interval ceiling to 1 second
         mLocationRequest.setFastestInterval(LocationUtils.FAST_INTERVAL_CEILING_IN_MILLISECONDS);
 
         mClient = client;
@@ -74,6 +73,13 @@ public class CordovaLocationListener implements LocationListener {
     public void onLocationChanged(Location location) {
         Log.d(TAG, "The location has been updated!");
         win(location);
+    }
+
+    public void setLocationRequestParams(int priority, long interval, long fastInterval) {
+        mLocationRequest.setPriority(priority);
+        mLocationRequest.setInterval(interval);
+        mLocationRequest.setFastestInterval(fastInterval);
+
     }
 
     public int size() {

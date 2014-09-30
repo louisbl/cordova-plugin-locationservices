@@ -27,12 +27,20 @@ var argscheck = require('cordova/argscheck'),
 
 var timers = {};   // list of timers in use
 
+var PRIORITY_HIGH_ACCURACY = 100;
+var PRIORITY_BALANCED_POWER_ACCURACY = 102;
+var PRIORITY_LOW_POWER = 104;
+var PRIORITY_NO_POWER = 105;
+
 // Returns default params, overrides if provided with values
 function parseParameters(options) {
     var opt = {
         maximumAge: 0,
-        enableHighAccuracy: false,
-        timeout: Infinity
+        enableHighAccuracy: true,
+        timeout: Infinity,
+        interval: 6000,
+        fastInterval: 1000,
+        priority: PRIORITY_HIGH_ACCURACY
     };
 
     if (options) {
@@ -47,6 +55,26 @@ function parseParameters(options) {
                 opt.timeout = 0;
             } else {
                 opt.timeout = options.timeout;
+            }
+        }
+        if (options.interval !== undefined && !isNaN(options.interval) && options.interval > 0) {
+            opt.interval = options.interval;
+        }
+        if (options.fastInterval !== undefined && !isNaN(options.fastInterval) && options.fastInterval > 0) {
+            opt.fastInterval = options.fastInterval;
+        }
+        if (options.priority !== undefined && !isNaN(options.priority) && options.priority >= PRIORITY_NO_POWER && options.priority <= PRIORITY_HIGH_ACCURACY) {
+            if (options.priority === PRIORITY_NO_POWER) {
+                opt.priority = PRIORITY_NO_POWER;
+            }
+            if (options.priority === PRIORITY_LOW_POWER) {
+                opt.priority = PRIORITY_LOW_POWER;
+            }
+            if (options.priority === PRIORITY_BALANCED_POWER_ACCURACY) {
+                opt.priority = PRIORITY_BALANCED_POWER_ACCURACY;
+            }
+            if (options.priority === PRIORITY_HIGH_ACCURACY) {
+                opt.priority = PRIORITY_HIGH_ACCURACY;
             }
         }
     }
@@ -190,7 +218,7 @@ var geolocation = {
             successCallback(pos);
         };
 
-        exec(win, fail, "Geolocation", "addWatch", [id, options.enableHighAccuracy]);
+        exec(win, fail, "Geolocation", "addWatch", [id, options.enableHighAccuracy, options.priority, options.interval, options.fastInterval]);
 
         return id;
     },
@@ -206,6 +234,13 @@ var geolocation = {
             exec(null, null, "Geolocation", "clearWatch", [id]);
         }
     }
+};
+
+geolocation.priorities = {
+    PRIORITY_HIGH_ACCURACY: PRIORITY_HIGH_ACCURACY,
+    PRIORITY_BALANCED_POWER_ACCURACY: PRIORITY_BALANCED_POWER_ACCURACY,
+    PRIORITY_LOW_POWER: PRIORITY_LOW_POWER,
+    PRIORITY_NO_POWER: PRIORITY_NO_POWER
 };
 
 module.exports = geolocation;

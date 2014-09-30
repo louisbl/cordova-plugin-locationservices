@@ -131,7 +131,7 @@ public class GeoBroker extends CordovaPlugin implements
             return true;
         }
 
-        if (isGPSdisabled()) {
+        if (args.getBoolean(1) && isGPSdisabled()) {
             PluginResult.Status status = PluginResult.Status.ERROR;
             String message = "GPS is disabled on this device.";
             PluginResult result = new PluginResult(status, message);
@@ -152,6 +152,10 @@ public class GeoBroker extends CordovaPlugin implements
                 }
             } else if (action.equals("addWatch")) {
                 String id = args.getString(0);
+                int priority = args.getInt(1);
+                long interval = args.getLong(2);
+                long fastInterval = args.getLong(3);
+                getListener().setLocationRequestParams(priority, interval, fastInterval);
                 mWantUpdates = true;
                 this.addWatch(id, callbackContext);
             } else {
