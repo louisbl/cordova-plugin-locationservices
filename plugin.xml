@@ -24,7 +24,7 @@ xmlns:android="http://schemas.android.com/apk/res/android"
       version="0.1.0-dev">
 
     <name>Android Native Geolocation</name>
-    <description>Android native Geolocation Plugin</description>
+    <description>Android native Geolocation Plugin using Google Play Services Location API.</description>
     <license>Apache 2.0</license>
     <keywords>cordova,geolocation</keywords>
     <repo>https://github.com/louisbl/cordova-native-geolocation</repo>
