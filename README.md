@@ -49,6 +49,8 @@ see the Privacy Guide.
 
     cordova plugin add fr.louisbl.cordova.nativegeolocation
 
+Then [add Google Play Services to your project](https://developer.android.com/google/play-services/setup.html)
+
 ## Supported Platforms
 
 - Android

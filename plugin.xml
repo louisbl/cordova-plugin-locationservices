@@ -30,8 +30,6 @@ xmlns:android="http://schemas.android.com/apk/res/android"
     <repo>https://github.com/louisbl/cordova-native-geolocation</repo>
     <issue>https://github.com/louisbl/cordova-native-geolocation/issues</issue>
 
-   <dependency id="com.google.playservices" />
-
     <!-- android -->
     <platform name="android">
 
