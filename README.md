@@ -65,6 +65,7 @@ see the Privacy Guide.
 - Position
 - PositionError
 - Coordinates
+- Priorities
 
 ## navigator.geolocation.getCurrentPosition
 
@@ -180,35 +181,25 @@ Optional parameters to customize the retrieval of the geolocation
 
 - __interval__: Set the desired interval for active location updates, in milliseconds.
 
-The location client will actively try to obtain location updates for your application at this interval, so it has a direct influence on the amount of power used by your application. Choose your interval wisely.
+    The location client will actively try to obtain location updates for your application at this interval, so it has a direct influence on the amount of power used by your application. Choose your interval wisely.
 
-This interval is inexact. You may not receive updates at all (if no location sources are available), or you may receive them slower than requested. You may also receive them faster than requested (if other applications are requesting location at a faster interval). The fastest rate that that you will receive updates can be controlled with __fastInterval__. By default this fastest rate is 6x the interval frequency.
+    This interval is inexact. You may not receive updates at all (if no location sources are available), or you may receive them slower than requested. You may also receive them faster than requested (if other applications are requesting location at a faster interval). The fastest rate that that you will receive updates can be controlled with __fastInterval__. By default this fastest rate is 6x the interval frequency.
 
-Applications with only the coarse location permission may have their interval silently throttled.
+    Applications with only the coarse location permission may have their interval silently throttled.
 
-An interval of 0 is allowed, but not recommended, since location updates may be extremely fast on future implementations. _(Number)_
+    An interval of 0 is allowed, but not recommended, since location updates may be extremely fast on future implementations. _(Number)_
 
 - __fastInterval__: Explicitly set the fastest interval for location updates, in milliseconds.
 
-This controls the fastest rate at which your application will receive location updates, which might be faster than __interval__ in some situations (for example, if other applications are triggering location updates).
+    This controls the fastest rate at which your application will receive location updates, which might be faster than __interval__ in some situations (for example, if other applications are triggering location updates).
 
-This allows your application to passively acquire locations at a rate faster than it actively acquires locations, saving power.
+    This allows your application to passively acquire locations at a rate faster than it actively acquires locations, saving power.
 
-Unlike __interval__, this parameter is exact. Your application will never receive updates faster than this value.
+    Unlike __interval__, this parameter is exact. Your application will never receive updates faster than this value.
 
-If you don't call this method, a fastest interval will be selected for you. It will be a value faster than your active interval (__interval__).
+    If you don't call this method, a fastest interval will be selected for you. It will be a value faster than your active interval (__interval__).
 
-An interval of 0 is allowed, but not recommended, since location updates may be extremely fast on future implementations.  _(Number)_
-
-## navigator.geolocation.priorities
-
-Constants to use with __priority__ options.
-
-### Values
-- PRIORITY_HIGH_ACCURACY;
-- PRIORITY_BALANCED_POWER_ACCURACY;
-- PRIORITY_LOW_POWER;
-- PRIORITY_NO_POWER;
+    An interval of 0 is allowed, but not recommended, since location updates may be extremely fast on future implementations.  _(Number)_
 
 ## navigator.geolocation.clearWatch
 
@@ -287,3 +278,14 @@ callback function when an error occurs with navigator.geolocation.
   - Returned when the device is unable to retrieve a position. In general, this means the device is not connected to a network or can't get a satellite fix.
 - `PositionError.TIMEOUT`
   - Returned when the device is unable to retrieve a position within the time specified by the `timeout` included in `geolocationOptions`. When used with `navigator.geolocation.watchPosition`, this error could be repeatedly passed to the `geolocationError` callback every `timeout` milliseconds.
+
+## Priorities
+
+This object holds the constants to use with __priority__ options.
+
+### Constants
+
+- navigator.geolocation.priorities.PRIORITY_HIGH_ACCURACY
+- navigator.geolocation.priorities.PRIORITY_BALANCED_POWER_ACCURACY
+- navigator.geolocation.priorities.PRIORITY_LOW_POWER
+- navigator.geolocation.priorities.PRIORITY_NO_POWER
