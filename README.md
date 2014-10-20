@@ -17,7 +17,7 @@
     under the License.
 -->
 
-# fr.louisbl.cordova.nativegeolocation
+# Google Location Services for Cordova - Android
 
 This plugin provides information about the device's location, such as
 latitude and longitude. Common sources of location information include
@@ -47,9 +47,9 @@ see the Privacy Guide.
 
 ## Installation
 
-    cordova plugin add fr.louisbl.cordova.nativegeolocation
+    cordova plugin add fr.louisbl.cordova.locationservices
 
-Then [add Google Play Services to your project](https://developer.android.com/google/play-services/setup.html)
+Then [add Google Play Services to your project](https://developer.android.com/google/play-services/setup.html) and [add the Android Support Library v4](https://developer.android.com/tools/support-library/setup.html).
 
 ## Supported Platforms
 
@@ -58,9 +58,9 @@ Then [add Google Play Services to your project](https://developer.android.com/go
 
 ## Methods
 
-- navigator.geolocation.getCurrentPosition
-- navigator.geolocation.watchPosition
-- navigator.geolocation.clearWatch
+- LocationServices.getCurrentPosition
+- LocationServices.watchPosition
+- LocationServices.clearWatch
 
 ## Objects (Read-Only)
 
@@ -69,14 +69,14 @@ Then [add Google Play Services to your project](https://developer.android.com/go
 - Coordinates
 - Priorities
 
-## navigator.geolocation.getCurrentPosition
+## LocationServices.getCurrentPosition
 
 Returns the device's current position to the `geolocationSuccess`
 callback with a `Position` object as the parameter.  If there is an
 error, the `geolocationError` callback is passed a
 `PositionError` object.
 
-    navigator.geolocation.getCurrentPosition(geolocationSuccess,
+    LocationServices.getCurrentPosition(geolocationSuccess,
                                              [geolocationError],
                                              [geolocationOptions]);
 
@@ -113,9 +113,9 @@ error, the `geolocationError` callback is passed a
               'message: ' + error.message + '\n');
     }
 
-    navigator.geolocation.getCurrentPosition(onSuccess, onError);
+    LocationServices.getCurrentPosition(onSuccess, onError);
 
-## navigator.geolocation.watchPosition
+## LocationServices.watchPosition
 
 Returns the device's current position when a change in position is detected.
 When the device retrieves a new location, the `geolocationSuccess`
@@ -123,7 +123,7 @@ callback executes with a `Position` object as the parameter.  If
 there is an error, the `geolocationError` callback executes with a
 `PositionError` object as the parameter.
 
-    var watchId = navigator.geolocation.watchPosition(geolocationSuccess,
+    var watchId = LocationServices.watchPosition(geolocationSuccess,
                                                       [geolocationError],
                                                       [geolocationOptions]);
 
@@ -137,7 +137,7 @@ there is an error, the `geolocationError` callback executes with a
 
 ### Returns
 
-- __String__: returns a watch id that references the watch position interval. The watch id should be used with `navigator.geolocation.clearWatch` to stop watching for changes in position.
+- __String__: returns a watch id that references the watch position interval. The watch id should be used with `LocationServices.clearWatch` to stop watching for changes in position.
 
 ### Example
 
@@ -161,7 +161,7 @@ there is an error, the `geolocationError` callback executes with a
 
     // Options: throw an error if no update is received every 30 seconds.
     //
-    var watchID = navigator.geolocation.watchPosition(onSuccess, onError, { timeout: 30000, priority: navigator.geolocation.priorities.PRIORITY_HIGH_ACCURACY });
+    var watchID = LocationServices.watchPosition(onSuccess, onError, { timeout: 30000, priority: LocationServices.priorities.PRIORITY_HIGH_ACCURACY });
 
 
 ## geolocationOptions
@@ -169,13 +169,13 @@ there is an error, the `geolocationError` callback executes with a
 Optional parameters to customize the retrieval of the geolocation
 `Position`.
 
-    { maximumAge: 3000, timeout: 5000, enableHighAccuracy: true, priority: navigator.geolocation.priorities.PRIORITY_HIGH_ACCURACY, interval: 6000, fastInterval: 1000 };
+    { maximumAge: 3000, timeout: 5000, enableHighAccuracy: true, priority: LocationServices.priorities.PRIORITY_HIGH_ACCURACY, interval: 6000, fastInterval: 1000 };
 
 ### Options
 
 - __enableHighAccuracy__: Provides a hint that the application needs the best possible results. It will force the plugin to check if the GPS is enabled before any action. _(Boolean)_
 
-- __timeout__: The maximum length of time (milliseconds) that is allowed to pass from the call to `navigator.geolocation.getCurrentPosition` or `geolocation.watchPosition` until the corresponding `geolocationSuccess` callback executes. If the `geolocationSuccess` callback is not invoked within this time, the `geolocationError` callback is passed a `PositionError.TIMEOUT` error code. (Note that when used in conjunction with `geolocation.watchPosition`, the `geolocationError` callback could be called on an interval every `timeout` milliseconds!) _(Number)_
+- __timeout__: The maximum length of time (milliseconds) that is allowed to pass from the call to `LocationServices.getCurrentPosition` or `geolocation.watchPosition` until the corresponding `geolocationSuccess` callback executes. If the `geolocationSuccess` callback is not invoked within this time, the `geolocationError` callback is passed a `PositionError.TIMEOUT` error code. (Note that when used in conjunction with `geolocation.watchPosition`, the `geolocationError` callback could be called on an interval every `timeout` milliseconds!) _(Number)_
 
 - __maximumAge__: Accept a cached position whose age is no greater than the specified time in milliseconds. _(Number)_
 
@@ -203,12 +203,12 @@ Optional parameters to customize the retrieval of the geolocation
 
     An interval of 0 is allowed, but not recommended, since location updates may be extremely fast on future implementations.  _(Number)_
 
-## navigator.geolocation.clearWatch
+## LocationServices.clearWatch
 
 Stop watching for changes to the device's location referenced by the
 `watchID` parameter.
 
-    navigator.geolocation.clearWatch(watchID);
+    LocationServices.clearWatch(watchID);
 
 ### Parameters
 
@@ -219,11 +219,11 @@ Stop watching for changes to the device's location referenced by the
     // Options: watch for changes in position, and use the most
     // accurate position acquisition method available.
     //
-    var watchID = navigator.geolocation.watchPosition(onSuccess, onError, { enableHighAccuracy: true });
+    var watchID = LocationServices.watchPosition(onSuccess, onError, { enableHighAccuracy: true });
 
     // ...later on...
 
-    navigator.geolocation.clearWatch(watchID);
+    LocationServices.clearWatch(watchID);
 
 ## Position
 
@@ -264,7 +264,7 @@ __altitudeAccuracy__: Not supported by Android devices, returning `null`.
 ## PositionError
 
 The `PositionError` object is passed to the `geolocationError`
-callback function when an error occurs with navigator.geolocation.
+callback function when an error occurs with LocationServices.
 
 ### Properties
 
@@ -279,7 +279,7 @@ callback function when an error occurs with navigator.geolocation.
 - `PositionError.POSITION_UNAVAILABLE`
   - Returned when the device is unable to retrieve a position. In general, this means the device is not connected to a network or can't get a satellite fix.
 - `PositionError.TIMEOUT`
-  - Returned when the device is unable to retrieve a position within the time specified by the `timeout` included in `geolocationOptions`. When used with `navigator.geolocation.watchPosition`, this error could be repeatedly passed to the `geolocationError` callback every `timeout` milliseconds.
+  - Returned when the device is unable to retrieve a position within the time specified by the `timeout` included in `geolocationOptions`. When used with `LocationServices.watchPosition`, this error could be repeatedly passed to the `geolocationError` callback every `timeout` milliseconds.
 
 ## Priorities
 
@@ -287,7 +287,7 @@ This object holds the constants to use with __priority__ options.
 
 ### Constants
 
-- navigator.geolocation.priorities.PRIORITY_HIGH_ACCURACY
-- navigator.geolocation.priorities.PRIORITY_BALANCED_POWER_ACCURACY
-- navigator.geolocation.priorities.PRIORITY_LOW_POWER
-- navigator.geolocation.priorities.PRIORITY_NO_POWER
+- LocationServices.priorities.PRIORITY_HIGH_ACCURACY
+- LocationServices.priorities.PRIORITY_BALANCED_POWER_ACCURACY
+- LocationServices.priorities.PRIORITY_LOW_POWER
+- LocationServices.priorities.PRIORITY_NO_POWER

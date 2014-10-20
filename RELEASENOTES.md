@@ -20,5 +20,10 @@
 -->
 # Release Notes
 
+
+### 0.2.0 (Oct 20, 2014)
+* Use GoogleApiClient instead of the deprecated LocationClient
+* Rename plugin and feature to LocationServices
+
 ### 0.1.0 (Sept 30, 2014)
 * First version

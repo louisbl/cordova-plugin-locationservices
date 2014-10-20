@@ -16,15 +16,7 @@
        specific language governing permissions and limitations
        under the License.
  */
-package fr.louisbl.cordova.nativegeolocation;
-
-import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
-import android.location.Location;
-import android.location.LocationManager;
-import android.os.Bundle;
-import android.util.Log;
+package fr.louisbl.cordova.locationservices;
 
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaInterface;
@@ -35,7 +27,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.google.android.gms.common.ConnectionResult;
+import android.content.Context;
+import android.location.Location;
+import android.location.LocationManager;
+import android.os.Bundle;
+import android.util.Log;
+
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
 
@@ -45,33 +42,25 @@ import com.google.android.gms.location.LocationServices;
  * This class only starts and stops various GeoListeners, which consist of a GPS and a Network Listener
  */
 
-public class GeoBroker extends CordovaPlugin implements
-		GoogleApiClient.ConnectionCallbacks,
-		GoogleApiClient.OnConnectionFailedListener {
+public class CordovaLocationServices extends CordovaPlugin implements
+		GoogleApiClient.ConnectionCallbacks {
 
 	private CordovaLocationListener mListener;
 	private boolean mWantLastLocation = false;
 	private boolean mWantUpdates = false;
 	private JSONArray mPrevArgs;
 	private CallbackContext mCbContext;
-	private GooglePlayServicesUtils mGooglePlayServicesUtils;
+	private GApiUtils mGApiUtils;
 	private GoogleApiClient mGApiClient;
 
 	@Override
 	public void initialize(CordovaInterface cordova, CordovaWebView webView) {
 		super.initialize(cordova, webView);
 		mGApiClient = new GoogleApiClient.Builder(cordova.getActivity())
-				.addApi(LocationServices.API)
-				.addConnectionCallbacks(this)
-				.addOnConnectionFailedListener(this)
-				.build();
+				.addApi(LocationServices.API).addConnectionCallbacks(this)
+				.addOnConnectionFailedListener(getGApiUtils()).build();
 	}
 
-	/*
-	 * Called by Location Services when the request to connect the client
-	 * finishes successfully. At this point, you can request the current
-	 * location or start periodic updates
-	 */
 	@Override
 	public void onConnected(Bundle bundle) {
 		Log.d(LocationUtils.APPTAG, "Location Services connected");
@@ -89,11 +78,6 @@ public class GeoBroker extends CordovaPlugin implements
 	public void onConnectionSuspended(int i) {
 		Log.i(LocationUtils.APPTAG,
 				"GoogleApiClient connection has been suspend");
-	}
-
-	@Override
-	public void onConnectionFailed(ConnectionResult connectionResult) {
-		Log.i(LocationUtils.APPTAG, "GoogleApiClient connection has failed");
 	}
 
 	/**
@@ -117,17 +101,13 @@ public class GeoBroker extends CordovaPlugin implements
 		}
 
 		if (args.getBoolean(1) && isGPSdisabled()) {
-			PluginResult.Status status = PluginResult.Status.ERROR;
-			String message = "GPS is disabled on this device.";
-			PluginResult result = new PluginResult(status, message);
-			callbackContext.sendPluginResult(result);
-
+			fail(CordovaLocationListener.POSITION_UNAVAILABLE,
+					"GPS is disabled on this device.", callbackContext, false);
 			return true;
 		}
 
-		if (getGooglePlayServicesUtils().servicesConnected()) {
-			if (!mGApiClient.isConnected()
-					&& !mGApiClient.isConnecting()) {
+		if (getGApiUtils().servicesConnected()) {
+			if (!mGApiClient.isConnected() && !mGApiClient.isConnecting()) {
 				mGApiClient.connect();
 			}
 			if (action.equals("getLocation")) {
@@ -149,10 +129,9 @@ public class GeoBroker extends CordovaPlugin implements
 				return false;
 			}
 		} else {
-			PluginResult.Status status = PluginResult.Status.ERROR;
-			String message = "Google Play Services is not available for this device.";
-			PluginResult result = new PluginResult(status, message);
-			callbackContext.sendPluginResult(result);
+			fail(CordovaLocationListener.POSITION_UNAVAILABLE,
+					"Google Play Services is not available on this device.",
+					callbackContext, false);
 		}
 		return true;
 	}
@@ -267,7 +246,8 @@ public class GeoBroker extends CordovaPlugin implements
 	private void getLastLocation(JSONArray args, CallbackContext callbackContext)
 			throws JSONException {
 		int maximumAge = args.getInt(0);
-		Location last = LocationServices.FusedLocationApi.getLastLocation(mGApiClient);
+		Location last = LocationServices.FusedLocationApi
+				.getLastLocation(mGApiClient);
 		// Check if we can use lastKnownLocation to get a quick reading and use
 		// less battery
 		if (last != null
@@ -307,10 +287,10 @@ public class GeoBroker extends CordovaPlugin implements
 		return mListener;
 	}
 
-	private GooglePlayServicesUtils getGooglePlayServicesUtils() {
-		if (mGooglePlayServicesUtils == null) {
-			mGooglePlayServicesUtils = new GooglePlayServicesUtils(cordova);
+	private GApiUtils getGApiUtils() {
+		if (mGApiUtils == null) {
+			mGApiUtils = new GApiUtils(cordova);
 		}
-		return mGooglePlayServicesUtils;
+		return mGApiUtils;
 	}
 }

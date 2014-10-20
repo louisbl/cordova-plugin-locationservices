@@ -20,15 +20,15 @@
 
 <plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
 xmlns:android="http://schemas.android.com/apk/res/android"
-           id="fr.louisbl.cordova.nativegeolocation"
-      version="0.1.0-dev">
+           id="fr.louisbl.cordova.locationservices"
+      version="0.1.1-dev">
 
-    <name>Android Native Geolocation</name>
-    <description>Android native Geolocation Plugin using Google Play Services Location API.</description>
+    <name>Google Location Services for Cordova - Android</name>
+    <description>Android geolocation plugin using Google Play Services Location API.</description>
     <license>Apache 2.0</license>
     <keywords>cordova,geolocation</keywords>
-    <repo>https://github.com/louisbl/cordova-native-geolocation</repo>
-    <issue>https://github.com/louisbl/cordova-native-geolocation/issues</issue>
+    <repo>https://github.com/louisbl/cordova-locationservices</repo>
+    <issue>https://github.com/louisbl/cordova-locationservices/issues</issue>
 
     <!-- android -->
     <platform name="android">
@@ -45,27 +45,28 @@ xmlns:android="http://schemas.android.com/apk/res/android"
             <clobbers target="Position" />
         </js-module>
 
-        <js-module src="www/geolocation.js" name="geolocation">
-            <clobbers target="navigator.geolocation" />
+        <js-module src="www/LocationServices.js" name="LocationServices">
+            <clobbers target="window.LocationServices" />
         </js-module>
 
         <config-file target="res/xml/config.xml" parent="/*">
-            <feature name="Geolocation">
-                <param name="android-package" value="fr.louisbl.cordova.nativegeolocation.GeoBroker"/>
+            <feature name="LocationServices">
+                <param name="android-package" value="fr.louisbl.cordova.locationservices.CordovaLocationServices"/>
             </feature>
         </config-file>
 
         <config-file target="AndroidManifest.xml" parent="/*">
+            <uses-permission android:name="android.permission.INTERNET" />
             <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
             <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
         </config-file>
 
-        <source-file src="src/android/CordovaLocationListener.java" target-dir="src/fr/louisbl/cordova/nativegeolocation" />
-        <source-file src="src/android/ErrorDialogFragment.java" target-dir="src/fr/louisbl/cordova/nativegeolocation" />
-        <source-file src="src/android/GeoBroker.java" target-dir="src/fr/louisbl/cordova/nativegeolocation" />
-        <source-file src="src/android/GooglePlayServicesUtils.java" target-dir="src/fr/louisbl/cordova/nativegeolocation" />
-        <source-file src="src/android/LocationServiceErrorMessages.java" target-dir="src/fr/louisbl/cordova/nativegeolocation" />
-        <source-file src="src/android/LocationUtils.java" target-dir="src/fr/louisbl/cordova/nativegeolocation" />
+        <source-file src="src/android/CordovaLocationListener.java" target-dir="src/fr/louisbl/cordova/locationservices" />
+        <source-file src="src/android/CordovaLocationServices.java" target-dir="src/fr/louisbl/cordova/locationservices" />
+        <source-file src="src/android/ErrorDialogFragment.java" target-dir="src/fr/louisbl/cordova/locationservices" />
+        <source-file src="src/android/GApiUtils.java" target-dir="src/fr/louisbl/cordova/locationservices" />
+        <source-file src="src/android/LocationServiceErrorMessages.java" target-dir="src/fr/louisbl/cordova/locationservices" />
+        <source-file src="src/android/LocationUtils.java" target-dir="src/fr/louisbl/cordova/locationservices" />
 
     </platform>
 </plugin>
