@@ -34,6 +34,7 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
 /*
@@ -90,49 +91,58 @@ public class CordovaLocationServices extends CordovaPlugin implements
 	 * @param callbackContext
 	 *            The callback id used when calling back into JavaScript.
 	 * @return True if the action was valid, or false if not.
+	 * @throws JSONException
 	 */
-	public boolean execute(String action, JSONArray args,
-			CallbackContext callbackContext) throws JSONException {
-		if (action.equals("clearWatch")) {
-			String id = args.getString(0);
-			this.clearWatch(id);
+	public boolean execute(final String action, final JSONArray args,
+			final CallbackContext callbackContext) {
 
-			return true;
+		if (action == null || !action.matches("getLocation|addWatch|clearWatch")) {
+			return false;
 		}
 
-		if (args.getBoolean(1) && isGPSdisabled()) {
-			fail(CordovaLocationListener.POSITION_UNAVAILABLE,
-					"GPS is disabled on this device.", callbackContext, false);
-			return true;
-		}
+		final String id = args.optString(0, "");
+		final boolean highAccuracy = args.optBoolean(1, false);
+		final int priority = args.optInt(2, LocationRequest.PRIORITY_HIGH_ACCURACY);
+		final long interval = args.optLong(3, LocationUtils.UPDATE_INTERVAL_IN_MILLISECONDS);
+		final long fastInterval = args.optLong(4, LocationUtils.FAST_INTERVAL_CEILING_IN_MILLISECONDS);
 
-		if (getGApiUtils().servicesConnected()) {
-			if (!mGApiClient.isConnected() && !mGApiClient.isConnecting()) {
-				mGApiClient.connect();
-			}
-			if (action.equals("getLocation")) {
-				if (mGApiClient.isConnected()) {
-					getLastLocation(args, callbackContext);
-				} else {
-					setWantLastLocation(args, callbackContext);
+		cordova.getThreadPool().execute(new Runnable() {
+			public void run() {
+				if (action.equals("clearWatch")) {
+					clearWatch(id);
 				}
-			} else if (action.equals("addWatch")) {
-				String id = args.getString(0);
-				int priority = args.getInt(2);
-				long interval = args.getLong(3);
-				long fastInterval = args.getLong(4);
-				getListener().setLocationRequestParams(priority, interval,
-						fastInterval);
-				mWantUpdates = true;
-				this.addWatch(id, callbackContext);
-			} else {
-				return false;
+
+				if (highAccuracy && isGPSdisabled()) {
+					fail(CordovaLocationListener.POSITION_UNAVAILABLE,
+							"GPS is disabled on this device.", callbackContext,
+							false);
+				}
+
+				if (getGApiUtils().servicesConnected()) {
+					if (!mGApiClient.isConnected()
+							&& !mGApiClient.isConnecting()) {
+						mGApiClient.connect();
+					}
+					if (action.equals("getLocation")) {
+						if (mGApiClient.isConnected()) {
+							getLastLocation(args, callbackContext);
+						} else {
+							setWantLastLocation(args, callbackContext);
+						}
+					} else if (action.equals("addWatch")) {
+						getListener().setLocationRequestParams(priority,
+								interval, fastInterval);
+						mWantUpdates = true;
+						addWatch(id, callbackContext);
+					}
+				} else {
+					fail(CordovaLocationListener.POSITION_UNAVAILABLE,
+							"Google Play Services is not available on this device.",
+							callbackContext, false);
+				}
 			}
-		} else {
-			fail(CordovaLocationListener.POSITION_UNAVAILABLE,
-					"Google Play Services is not available on this device.",
-					callbackContext, false);
-		}
+		});
+
 		return true;
 	}
 
@@ -233,19 +243,19 @@ public class CordovaLocationServices extends CordovaPlugin implements
 	}
 
 	private void getLastLocation() {
-		try {
-			getLastLocation(mPrevArgs, mCbContext);
-		} catch (JSONException e) {
-			e.printStackTrace();
-		} finally {
-			mCbContext = null;
-			mPrevArgs = null;
-		}
+		getLastLocation(mPrevArgs, mCbContext);
+		mCbContext = null;
+		mPrevArgs = null;
 	}
 
-	private void getLastLocation(JSONArray args, CallbackContext callbackContext)
-			throws JSONException {
-		int maximumAge = args.getInt(0);
+	private void getLastLocation(JSONArray args, CallbackContext callbackContext) {
+		int maximumAge;
+		try {
+			maximumAge = args.getInt(0);
+		} catch (JSONException e) {
+			e.printStackTrace();
+			maximumAge = 0;
+		}
 		Location last = LocationServices.FusedLocationApi
 				.getLastLocation(mGApiClient);
 		// Check if we can use lastKnownLocation to get a quick reading and use
