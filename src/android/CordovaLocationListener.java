@@ -21,9 +21,10 @@ package fr.louisbl.cordova.nativegeolocation;
 import android.location.Location;
 import android.util.Log;
 
-import com.google.android.gms.location.LocationClient;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
 
 import org.apache.cordova.CallbackContext;
 
@@ -42,14 +43,14 @@ public class CordovaLocationListener implements LocationListener {
 
     protected boolean mIsRunning = false;
 
-    private LocationClient mClient;
+    private GoogleApiClient mGApiClient;
     private LocationRequest mLocationRequest;
     private GeoBroker mOwner;
     private List<CallbackContext> mCallbacks = new ArrayList<CallbackContext>();
     private Timer mTimer = null;
     private String TAG;
 
-    public CordovaLocationListener(LocationClient client, GeoBroker broker, String tag) {
+    public CordovaLocationListener(GoogleApiClient client, GeoBroker broker, String tag) {
         // Create a new global location parameters object
         mLocationRequest = LocationRequest.create();
         // Set the average interval to 6 seconds
@@ -59,7 +60,7 @@ public class CordovaLocationListener implements LocationListener {
         // Set the interval ceiling to 1 second
         mLocationRequest.setFastestInterval(LocationUtils.FAST_INTERVAL_CEILING_IN_MILLISECONDS);
 
-        mClient = client;
+        mGApiClient = client;
         mOwner = broker;
         TAG = tag;
     }
@@ -158,10 +159,10 @@ public class CordovaLocationListener implements LocationListener {
     }
 
     protected void start() {
-        if (mClient != null && mClient.isConnected()) {
+        if (mGApiClient != null && mGApiClient.isConnected()) {
             if (!mIsRunning) {
                 mIsRunning = true;
-                mClient.requestLocationUpdates(mLocationRequest, this);
+                LocationServices.FusedLocationApi.requestLocationUpdates(mGApiClient, mLocationRequest, this);
             }
         }
     }
@@ -173,9 +174,8 @@ public class CordovaLocationListener implements LocationListener {
         cancelTimer();
 
         if (mIsRunning) {
-            if (mClient != null && mClient.isConnected()) {
-                mClient.removeLocationUpdates(this);
-                mClient.disconnect();
+            if (mGApiClient != null && mGApiClient.isConnected()) {
+                LocationServices.FusedLocationApi.removeLocationUpdates(mGApiClient, this);
             }
             mIsRunning = false;
         }
