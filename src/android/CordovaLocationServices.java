@@ -106,43 +106,40 @@ public class CordovaLocationServices extends CordovaPlugin implements
 		final long interval = args.optLong(3, LocationUtils.UPDATE_INTERVAL_IN_MILLISECONDS);
 		final long fastInterval = args.optLong(4, LocationUtils.FAST_INTERVAL_CEILING_IN_MILLISECONDS);
 
-		cordova.getThreadPool().execute(new Runnable() {
-			public void run() {
-				if (action.equals("clearWatch")) {
-					clearWatch(id);
-				}
+		if (action.equals("clearWatch")) {
+			clearWatch(id);
+			return true;
+		}
 
-				if (highAccuracy && isGPSdisabled()) {
-					fail(CordovaLocationListener.POSITION_UNAVAILABLE,
-							"GPS is disabled on this device.", callbackContext,
-							false);
-				}
+		if (highAccuracy && isGPSdisabled()) {
+			fail(CordovaLocationListener.POSITION_UNAVAILABLE,
+					"GPS is disabled on this device.", callbackContext,
+					false);
+		}
 
-				if (getGApiUtils().servicesConnected()) {
-					if (!mGApiClient.isConnected()
-							&& !mGApiClient.isConnecting()) {
-						mGApiClient.connect();
-					}
-					if (action.equals("getLocation")) {
-						if (mGApiClient.isConnected()) {
-							getLastLocation(args, callbackContext);
-						} else {
-							setWantLastLocation(args, callbackContext);
-						}
-					} else if (action.equals("addWatch")) {
-						getListener().setLocationRequestParams(priority,
-								interval, fastInterval);
-						mWantUpdates = true;
-						addWatch(id, callbackContext);
-					}
-				} else {
-					fail(CordovaLocationListener.POSITION_UNAVAILABLE,
-							"Google Play Services is not available on this device.",
-							callbackContext, false);
-				}
+		if (getGApiUtils().servicesConnected()) {
+			if (!mGApiClient.isConnected()
+					&& !mGApiClient.isConnecting()) {
+				mGApiClient.connect();
 			}
-		});
-
+			if (action.equals("getLocation")) {
+				if (mGApiClient.isConnected()) {
+					getLastLocation(args, callbackContext);
+				} else {
+					setWantLastLocation(args, callbackContext);
+				}
+			} else if (action.equals("addWatch")) {
+				getListener().setLocationRequestParams(priority,
+						interval, fastInterval);
+				mWantUpdates = true;
+				addWatch(id, callbackContext);
+			}
+		} else {
+			fail(CordovaLocationListener.POSITION_UNAVAILABLE,
+					"Google Play Services is not available on this device.",
+					callbackContext, false);
+		}
+		
 		return true;
 	}
 
