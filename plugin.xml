@@ -32,6 +32,7 @@ xmlns:android="http://schemas.android.com/apk/res/android"
 
     <!-- android -->
     <platform name="android">
+        <framework src="com.google.android.gms:play-services-location:7.5.0" />
 
         <js-module src="www/Coordinates.js" name="Coordinates">
             <clobbers target="Coordinates" />
