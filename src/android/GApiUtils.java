@@ -41,7 +41,7 @@ public class GApiUtils implements GoogleApiClient.OnConnectionFailedListener {
 		} else {
 			// If no resolution is available, display a dialog to the user with
 			// the error.
-			showErrorDialog(connectionResult.getErrorCode());
+			showErrorDialog(connectionResult.getErrorCode(), LocationUtils.CONNECTION_FAILURE_RESOLUTION_REQUEST);
 		}
 	}
 
@@ -65,15 +65,7 @@ public class GApiUtils implements GoogleApiClient.OnConnectionFailedListener {
 			return true;
 			// Google Play services was not available for some reason
 		} else {
-			// Display an error dialog
-			Dialog dialog = GooglePlayServicesUtil.getErrorDialog(resultCode,
-					mCordova.getActivity(), 0);
-			if (dialog != null) {
-				ErrorDialogFragment errorFragment = new ErrorDialogFragment();
-				errorFragment.setDialog(dialog);
-				errorFragment.show(mCordova.getActivity().getFragmentManager(),
-						LocationUtils.APPTAG);
-			}
+			showErrorDialog(resultCode, 0);
 			return false;
 		}
 	}
@@ -85,26 +77,26 @@ public class GApiUtils implements GoogleApiClient.OnConnectionFailedListener {
 	 * @param errorCode
 	 *            An error code returned from onConnectionFailed
 	 */
-	private void showErrorDialog(int errorCode) {
+	private void showErrorDialog(final int errorCode, final int requestCode) {
+		mCordova.getActivity().runOnUiThread(new Runnable() {
+			public void run() {
+				// Get the error dialog from Google Play services
+				Dialog errorDialog = GooglePlayServicesUtil.getErrorDialog(errorCode, mCordova.getActivity(), requestCode);
 
-		// Get the error dialog from Google Play services
-		Dialog errorDialog = GooglePlayServicesUtil.getErrorDialog(errorCode,
-				mCordova.getActivity(),
-				LocationUtils.CONNECTION_FAILURE_RESOLUTION_REQUEST);
+				// If Google Play services can provide an error dialog
+				if (errorDialog != null) {
 
-		// If Google Play services can provide an error dialog
-		if (errorDialog != null) {
+					// Create a new DialogFragment in which to show the error dialog
+					ErrorDialogFragment errorFragment = new ErrorDialogFragment();
 
-			// Create a new DialogFragment in which to show the error dialog
-			ErrorDialogFragment errorFragment = new ErrorDialogFragment();
+					// Set the dialog in the DialogFragment
+					errorFragment.setDialog(errorDialog);
 
-			// Set the dialog in the DialogFragment
-			errorFragment.setDialog(errorDialog);
-
-			// Show the error dialog in the DialogFragment
-			errorFragment.show(mCordova.getActivity().getFragmentManager(),
-					LocationUtils.APPTAG);
-		}
+					// Show the error dialog in the DialogFragment
+					errorFragment.show(mCordova.getActivity().getFragmentManager(),
+							LocationUtils.APPTAG);
+				}
+			}
+		});
 	}
-
 }
