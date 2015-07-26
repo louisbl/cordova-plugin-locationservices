@@ -20,6 +20,12 @@
 -->
 # Release Notes
 
+### 0.2.2 (Jul 26, 2015)
+* Fix crash when dismissing Google Play Services error dialog
+* Add google play services automatically to the project
+
+Many thanks to @mlegenhausen.
+
 ### 0.2.1 (Oct 22, 2014)
 * Fix crash by removing usage of cordova getThreadPool
 
