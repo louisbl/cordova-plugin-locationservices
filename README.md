@@ -47,7 +47,7 @@ see the Privacy Guide.
 
 ## Installation
 
-    cordova plugin add fr.louisbl.cordova.locationservices
+    cordova plugin add cordova-plugin-locationservices
 
 Then [add the Android Support and Google Repository](https://developer.android.com/tools/support-library/setup.html).
 
