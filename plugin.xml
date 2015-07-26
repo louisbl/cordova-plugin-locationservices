@@ -21,14 +21,14 @@
 <plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
 xmlns:android="http://schemas.android.com/apk/res/android"
            id="cordova-plugin-locationservices"
-      version="0.2.2">
+      version="1.0.0">
 
     <name>Google Location Services for Cordova - Android</name>
     <description>Android geolocation plugin using Google Play Services Location API.</description>
     <license>Apache 2.0</license>
-    <keywords>cordova,geolocation</keywords>
-    <repo>https://github.com/louisbl/cordova-locationservices</repo>
-    <issue>https://github.com/louisbl/cordova-locationservices/issues</issue>
+    <keywords>cordova,geolocation,google-play-services</keywords>
+    <repo>https://github.com/louisbl/cordova-plugin-locationservices</repo>
+    <issue>https://github.com/louisbl/cordova-plugin-locationservices/issues</issue>
 
     <!-- android -->
     <platform name="android">

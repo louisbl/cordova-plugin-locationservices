@@ -20,6 +20,10 @@
 -->
 # Release Notes
 
+### 1.0.0 (Jul 26, 2015)
+* Change id from `fr.louisbl.cordova.locationservices` to `cordova-plugin-locationservices`
+* Publish to npm
+
 ### 0.2.2 (Jul 26, 2015)
 * Fix crash when dismissing Google Play Services error dialog
 * Add google play services automatically to the project
