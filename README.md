@@ -49,7 +49,7 @@ see the Privacy Guide.
 
     cordova plugin add fr.louisbl.cordova.locationservices
 
-Then [add Google Play Services to your project](https://developer.android.com/google/play-services/setup.html) and [add the Android Support Library v4](https://developer.android.com/tools/support-library/setup.html).
+Then [add the Android Support and Google Repository](https://developer.android.com/tools/support-library/setup.html).
 
 ## Supported Platforms
 
