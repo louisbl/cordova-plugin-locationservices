@@ -20,6 +20,9 @@
 -->
 # Release Notes
 
+### 1.0.2 (Jul 26, 2015)
+* Fix License and copyright header.
+
 ### 1.0.1 (Jul 26, 2015)
 * Update README and package.json for npm web page.
 
