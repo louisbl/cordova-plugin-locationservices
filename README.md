@@ -47,7 +47,13 @@ see the Privacy Guide.
 
 ## Installation
 
+The plugin is published on [npm](https://www.npmjs.com/package/cordova-plugin-locationservices):
+
     cordova plugin add cordova-plugin-locationservices
+
+If you wish to use the old Cordova registry, use the previous plugin id:
+
+    cordova plugin add fr.louisbl.cordova.locationservices
 
 Then [add the Android Support and Google Repository](https://developer.android.com/tools/support-library/setup.html).
 

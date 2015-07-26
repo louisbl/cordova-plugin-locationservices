@@ -20,6 +20,9 @@
 -->
 # Release Notes
 
+### 1.0.1 (Jul 26, 2015)
+* Update README and package.json for npm web page.
+
 ### 1.0.0 (Jul 26, 2015)
 * Change id from `fr.louisbl.cordova.locationservices` to `cordova-plugin-locationservices`
 * Publish to npm
