@@ -28,25 +28,25 @@ exports.defineAutoTests = function () {
         done();
     };
 
-    describe('Geolocation (navigator.geolocation)', function () {
+    describe('Geolocation (cordova.plugins.locationServices.geolocation)', function () {
 
         it("geolocation.spec.1 should exist", function () {
-            expect(navigator.geolocation).toBeDefined();
+            expect(cordova.plugins.locationServices.geolocation).toBeDefined();
         });
 
         it("geolocation.spec.2 should contain a getCurrentPosition function", function () {
-            expect(typeof navigator.geolocation.getCurrentPosition).toBeDefined();
-            expect(typeof navigator.geolocation.getCurrentPosition == 'function').toBe(true);
+            expect(typeof cordova.plugins.locationServices.geolocation.getCurrentPosition).toBeDefined();
+            expect(typeof cordova.plugins.locationServices.geolocation.getCurrentPosition == 'function').toBe(true);
         });
 
         it("geolocation.spec.3 should contain a watchPosition function", function () {
-            expect(typeof navigator.geolocation.watchPosition).toBeDefined();
-            expect(typeof navigator.geolocation.watchPosition == 'function').toBe(true);
+            expect(typeof cordova.plugins.locationServices.geolocation.watchPosition).toBeDefined();
+            expect(typeof cordova.plugins.locationServices.geolocation.watchPosition == 'function').toBe(true);
         });
 
         it("geolocation.spec.4 should contain a clearWatch function", function () {
-            expect(typeof navigator.geolocation.clearWatch).toBeDefined();
-            expect(typeof navigator.geolocation.clearWatch == 'function').toBe(true);
+            expect(typeof cordova.plugins.locationServices.geolocation.clearWatch).toBeDefined();
+            expect(typeof cordova.plugins.locationServices.geolocation.clearWatch == 'function').toBe(true);
         });
 
     });
@@ -56,7 +56,7 @@ exports.defineAutoTests = function () {
         describe('error callback', function () {
 
             it("geolocation.spec.5 should be called if we set timeout to 0 and maximumAge to a very small number", function (done) {
-                navigator.geolocation.getCurrentPosition(
+                cordova.plugins.locationServices.geolocation.getCurrentPosition(
                     fail.bind(null, done),
                     succeed.bind(null, done),
                     {
@@ -70,7 +70,7 @@ exports.defineAutoTests = function () {
         describe('success callback', function () {
 
             it("geolocation.spec.6 should be called with a Position object", function (done) {
-                navigator.geolocation.getCurrentPosition(function (p) {
+                cordova.plugins.locationServices.geolocation.getCurrentPosition(function (p) {
                     expect(p.coords).toBeDefined();
                     expect(p.timestamp).toBeDefined();
                     done();
@@ -91,11 +91,11 @@ exports.defineAutoTests = function () {
 
             var errorWatch = null;
             afterEach(function () {
-                navigator.geolocation.clearWatch(errorWatch);
+                cordova.plugins.locationServices.geolocation.clearWatch(errorWatch);
             });
 
             it("geolocation.spec.7 should be called if we set timeout to 0 and maximumAge to a very small number", function (done) {
-                errorWatch = navigator.geolocation.watchPosition(
+                errorWatch = cordova.plugins.locationServices.geolocation.watchPosition(
                     fail.bind(null, done),
                     succeed.bind(null, done),
                     {
@@ -110,12 +110,12 @@ exports.defineAutoTests = function () {
 
             var successWatch = null;
             afterEach(function () {
-                navigator.geolocation.clearWatch(successWatch);
+                cordova.plugins.locationServices.geolocation.clearWatch(successWatch);
             });
 
             it("geolocation.spec.8 should be called with a Position object", function (done) {
 
-                successWatch = navigator.geolocation.watchPosition(
+                successWatch = cordova.plugins.locationServices.geolocation.watchPosition(
                     function (p) {
                         expect(p.coords).toBeDefined();
                         expect(p.timestamp).toBeDefined();
@@ -139,7 +139,7 @@ exports.defineAutoTests = function () {
 /******************************************************************************/
 
 exports.defineManualTests = function (contentEl, createActionButton) {
-    var newGeolocation = navigator.geolocation;
+    var newGeolocation = cordova.plugins.locationServices.geolocation;
     var origGeolocation = cordova.require('cordova/modulemapper').getOriginalSymbol(window, 'navigator.geolocation');
     if (!origGeolocation) {
         origGeolocation = newGeolocation;
@@ -304,7 +304,7 @@ exports.defineManualTests = function (contentEl, createActionButton) {
             'Expected result: Will stop watching the location so values will not be updated. Status will read Stopped.' +
             '<p/> <div id="built-in-getOld"></div>' +
             'Expected result: Will update location values with a cached position that is up to 30 seconds old. Verify with time value. Status will read Done.' +
-            '<h2>Use Cordova Geolocation Plugin</h2>' +
+            '<h2>Use Cordova LocationServices Plugin</h2>' +
             '<div id="cordova-getLocation"></div>' +
             'Expected result: Will update all applicable values in status box for current location. Status will read Retrieving Location (may not see this if location is retrieved immediately) then Done.' +
             '<p/> <div id="cordova-watchLocation"></div>' +
@@ -315,7 +315,7 @@ exports.defineManualTests = function (contentEl, createActionButton) {
             'Expected result: Will update location values with a cached position that is up to 30 seconds old. Verify with time value. Status will read Done.',
         values_info =
             '<h3>Details about each value are listed below in the status box</h3>',
-        note = 
+        note =
             '<h3>Allow use of current location, if prompted</h3>';
 
     contentEl.innerHTML = values_info + location_div + latitude + longitude + altitude + accuracy + heading + speed
