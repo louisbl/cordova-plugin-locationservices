@@ -20,6 +20,11 @@
 -->
 # Release Notes
 
+### 1.1.0 (Aug 07, 2015)
+* Move `LocationServices` object to `cordova.plugins.locationServices.geolocation`
+* `window.LocationServices` is still available
+* Update tests
+
 ### 1.0.2 (Jul 26, 2015)
 * Fix License and copyright header.
 
