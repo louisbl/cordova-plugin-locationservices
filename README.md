@@ -66,16 +66,16 @@ Then [add the Android Support and Google Repository](https://developer.android.c
 
 ## Methods
 
-- LocationServices.getCurrentPosition
-- LocationServices.watchPosition
-- LocationServices.clearWatch
+- cordova.plugins.locationServices.geolocation.getCurrentPosition
+- cordova.plugins.locationServices.geolocation.watchPosition
+- cordova.plugins.locationServices.geolocation.clearWatch
 
 ## Objects (Read-Only)
 
-- Position
-- PositionError
-- Coordinates
-- Priorities
+- cordova.plugins.locationServices.Position
+- cordova.plugins.locationServices.PositionError
+- cordova.plugins.locationServices.Coordinates
+- cordova.plugins.locationServices.Priorities
 
 ## LocationServices.getCurrentPosition
 
@@ -84,7 +84,7 @@ callback with a `Position` object as the parameter.  If there is an
 error, the `geolocationError` callback is passed a
 `PositionError` object.
 
-    LocationServices.getCurrentPosition(geolocationSuccess,
+    cordova.plugins.locationServices.geolocation.getCurrentPosition(geolocationSuccess,
                                              [geolocationError],
                                              [geolocationOptions]);
 
@@ -121,7 +121,7 @@ error, the `geolocationError` callback is passed a
               'message: ' + error.message + '\n');
     }
 
-    LocationServices.getCurrentPosition(onSuccess, onError);
+    cordova.plugins.locationServices.geolocation.getCurrentPosition(onSuccess, onError);
 
 ## LocationServices.watchPosition
 
@@ -131,7 +131,7 @@ callback executes with a `Position` object as the parameter.  If
 there is an error, the `geolocationError` callback executes with a
 `PositionError` object as the parameter.
 
-    var watchId = LocationServices.watchPosition(geolocationSuccess,
+    var watchId = cordova.plugins.locationServices.geolocation.watchPosition(geolocationSuccess,
                                                       [geolocationError],
                                                       [geolocationOptions]);
 
@@ -145,7 +145,7 @@ there is an error, the `geolocationError` callback executes with a
 
 ### Returns
 
-- __String__: returns a watch id that references the watch position interval. The watch id should be used with `LocationServices.clearWatch` to stop watching for changes in position.
+- __String__: returns a watch id that references the watch position interval. The watch id should be used with `cordova.plugins.locationServices.geolocation.clearWatch` to stop watching for changes in position.
 
 ### Example
 
@@ -169,7 +169,10 @@ there is an error, the `geolocationError` callback executes with a
 
     // Options: throw an error if no update is received every 30 seconds.
     //
-    var watchID = LocationServices.watchPosition(onSuccess, onError, { timeout: 30000, priority: LocationServices.priorities.PRIORITY_HIGH_ACCURACY });
+    var watchID = cordova.plugins.locationServices.geolocation.watchPosition(onSuccess, onError, {
+      timeout: 30000,
+      priority: cordova.plugins.locationServices.geolocation.priorities.PRIORITY_HIGH_ACCURACY
+    });
 
 
 ## geolocationOptions
@@ -177,13 +180,20 @@ there is an error, the `geolocationError` callback executes with a
 Optional parameters to customize the retrieval of the geolocation
 `Position`.
 
-    { maximumAge: 3000, timeout: 5000, enableHighAccuracy: true, priority: LocationServices.priorities.PRIORITY_HIGH_ACCURACY, interval: 6000, fastInterval: 1000 };
+    {
+      maximumAge: 3000,
+      timeout: 5000,
+      enableHighAccuracy: true,
+      priority: cordova.plugins.locationServices.geolocation.priorities.PRIORITY_HIGH_ACCURACY,
+      interval: 6000,
+      fastInterval: 1000
+    };
 
 ### Options
 
 - __enableHighAccuracy__: Provides a hint that the application needs the best possible results. It will force the plugin to check if the GPS is enabled before any action. _(Boolean)_
 
-- __timeout__: The maximum length of time (milliseconds) that is allowed to pass from the call to `LocationServices.getCurrentPosition` or `geolocation.watchPosition` until the corresponding `geolocationSuccess` callback executes. If the `geolocationSuccess` callback is not invoked within this time, the `geolocationError` callback is passed a `PositionError.TIMEOUT` error code. (Note that when used in conjunction with `geolocation.watchPosition`, the `geolocationError` callback could be called on an interval every `timeout` milliseconds!) _(Number)_
+- __timeout__: The maximum length of time (milliseconds) that is allowed to pass from the call to `cordova.plugins.locationServices.geolocation.getCurrentPosition` or `cordova.plugins.locationServices.geolocation.watchPosition` until the corresponding `geolocationSuccess` callback executes. If the `geolocationSuccess` callback is not invoked within this time, the `geolocationError` callback is passed a `PositionError.TIMEOUT` error code. (Note that when used in conjunction with `cordova.plugins.locationServices.geolocation.watchPosition`, the `geolocationError` callback could be called on an interval every `timeout` milliseconds!) _(Number)_
 
 - __maximumAge__: Accept a cached position whose age is no greater than the specified time in milliseconds. _(Number)_
 
@@ -216,7 +226,7 @@ Optional parameters to customize the retrieval of the geolocation
 Stop watching for changes to the device's location referenced by the
 `watchID` parameter.
 
-    LocationServices.clearWatch(watchID);
+    cordova.plugins.locationServices.geolocation.clearWatch(watchID);
 
 ### Parameters
 
@@ -227,15 +237,15 @@ Stop watching for changes to the device's location referenced by the
     // Options: watch for changes in position, and use the most
     // accurate position acquisition method available.
     //
-    var watchID = LocationServices.watchPosition(onSuccess, onError, { enableHighAccuracy: true });
+    var watchID = cordova.plugins.locationServices.geolocation.watchPosition(onSuccess, onError, { enableHighAccuracy: true });
 
     // ...later on...
 
-    LocationServices.clearWatch(watchID);
+    cordova.plugins.locationServices.geolocation.clearWatch(watchID);
 
 ## Position
 
-Contains `Position` coordinates and timestamp, created by the geolocation API.
+Contains `cordova.plugins.locationServices.Position` coordinates and timestamp, created by the geolocation API.
 
 ### Properties
 
@@ -245,7 +255,7 @@ Contains `Position` coordinates and timestamp, created by the geolocation API.
 
 ## Coordinates
 
-A `Coordinates` object is attached to a `Position` object that is
+A `cordova.plugins.locationServices.Coordinates` object is attached to a `Position` object that is
 available to callback functions in requests for the current position.
 It contains a set of properties that describe the geographic coordinates of a position.
 
@@ -271,7 +281,7 @@ __altitudeAccuracy__: Not supported by Android devices, returning `null`.
 
 ## PositionError
 
-The `PositionError` object is passed to the `geolocationError`
+The `cordova.plugins.locationServices.PositionError` object is passed to the `geolocationError`
 callback function when an error occurs with LocationServices.
 
 ### Properties
@@ -282,12 +292,12 @@ callback function when an error occurs with LocationServices.
 
 ### Constants
 
-- `PositionError.PERMISSION_DENIED`
+- `cordova.plugins.locationServices.PositionError.PERMISSION_DENIED`
   - Returned when users do not allow the app to retrieve position information. This is dependent on the platform.
-- `PositionError.POSITION_UNAVAILABLE`
+- `cordova.plugins.locationServices.PositionError.POSITION_UNAVAILABLE`
   - Returned when the device is unable to retrieve a position. In general, this means the device is not connected to a network or can't get a satellite fix.
-- `PositionError.TIMEOUT`
-  - Returned when the device is unable to retrieve a position within the time specified by the `timeout` included in `geolocationOptions`. When used with `LocationServices.watchPosition`, this error could be repeatedly passed to the `geolocationError` callback every `timeout` milliseconds.
+- `cordova.plugins.locationServices.PositionError.TIMEOUT`
+  - Returned when the device is unable to retrieve a position within the time specified by the `timeout` included in `geolocationOptions`. When used with `cordova.plugins.locationServices.geolocation.watchPosition`, this error could be repeatedly passed to the `geolocationError` callback every `timeout` milliseconds.
 
 ## Priorities
 
@@ -295,7 +305,7 @@ This object holds the constants to use with __priority__ options.
 
 ### Constants
 
-- LocationServices.priorities.PRIORITY_HIGH_ACCURACY
-- LocationServices.priorities.PRIORITY_BALANCED_POWER_ACCURACY
-- LocationServices.priorities.PRIORITY_LOW_POWER
-- LocationServices.priorities.PRIORITY_NO_POWER
+- cordova.plugins.locationServices.geolocation.priorities.PRIORITY_HIGH_ACCURACY
+- cordova.plugins.locationServices.geolocation.priorities.PRIORITY_BALANCED_POWER_ACCURACY
+- cordova.plugins.locationServices.geolocation.priorities.PRIORITY_LOW_POWER
+- cordova.plugins.locationServices.geolocation.priorities.PRIORITY_NO_POWER

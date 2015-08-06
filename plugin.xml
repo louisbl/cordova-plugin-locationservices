@@ -36,18 +36,26 @@ xmlns:android="http://schemas.android.com/apk/res/android"
 
         <js-module src="www/Coordinates.js" name="Coordinates">
             <clobbers target="Coordinates" />
+            <clobbers target="cordova.plugins.locationServices.Coordinates" />
+            <clobbers target="plugin.locationServices.Coordinates" />
         </js-module>
 
         <js-module src="www/PositionError.js" name="PositionError">
             <clobbers target="PositionError" />
+            <clobbers target="cordova.plugins.locationServices.PositionError" />
+            <clobbers target="plugin.locationServices.PositionError" />
         </js-module>
 
         <js-module src="www/Position.js" name="Position">
             <clobbers target="Position" />
+            <clobbers target="cordova.plugins.locationServices.PositionError" />
+            <clobbers target="plugin.locationServices.PositionError" />
         </js-module>
 
         <js-module src="www/LocationServices.js" name="LocationServices">
-            <clobbers target="window.LocationServices" />
+            <clobbers target="LocationServices" />
+            <clobbers target="cordova.plugins.locationServices.geolocation" />
+            <clobbers target="plugin.locationServices.geolocation" />
         </js-module>
 
         <config-file target="res/xml/config.xml" parent="/*">
