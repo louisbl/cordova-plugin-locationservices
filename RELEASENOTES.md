@@ -20,6 +20,11 @@
 -->
 # Release Notes
 
+### 1.2.0 (Nov 12, 2015)
+* Update Google Play Services to v7.8
+
+Thanks @mlegenhausen!
+
 ### 1.1.0 (Aug 07, 2015)
 * Move `LocationServices` object to `cordova.plugins.locationServices.geolocation`
 * `window.LocationServices` is still available
