@@ -18,9 +18,12 @@
  */
 package fr.louisbl.cordova.locationservices;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -40,9 +43,12 @@ import org.json.JSONObject;
 public class CordovaLocationServices extends CordovaPlugin implements
         GoogleApiClient.ConnectionCallbacks {
 
+    private static final int LOCATION_PERMISSION_REQUEST = 0;
+
     private CordovaLocationListener mListener;
     private boolean mWantLastLocation = false;
     private boolean mWantUpdates = false;
+    private String[] permissions = {Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION};
     private JSONArray mPrevArgs;
     private CallbackContext mCbContext;
     private GApiUtils mGApiUtils;
@@ -54,6 +60,49 @@ public class CordovaLocationServices extends CordovaPlugin implements
         mGApiClient = new GoogleApiClient.Builder(cordova.getActivity())
                 .addApi(LocationServices.API).addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(getGApiUtils()).build();
+    }
+
+    @Override
+    public void requestPermissions(int requestCode) {
+        cordova.requestPermissions(this, requestCode, permissions);
+    }
+
+    @Override
+    public boolean hasPermisssion() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+            return true;
+        }
+
+        for (String p : permissions) {
+            if (PackageManager.PERMISSION_DENIED == cordova.getActivity().checkSelfPermission(p)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    @Override
+    public void onRequestPermissionResult(int requestCode, String[] permissions, int[] grantResults) throws JSONException {
+        PluginResult result;
+
+        for (int r : grantResults) {
+            if (r == PackageManager.PERMISSION_DENIED) {
+                result = new PluginResult(PluginResult.Status.ILLEGAL_ACCESS_EXCEPTION);
+                mCbContext.sendPluginResult(result);
+
+                return;
+            }
+        }
+
+        if (LOCATION_PERMISSION_REQUEST == requestCode) {
+
+            result = new PluginResult(PluginResult.Status.OK);
+
+            mCbContext.sendPluginResult(result);
+        }
+
+        mCbContext = null;
     }
 
     @Override
@@ -86,9 +135,24 @@ public class CordovaLocationServices extends CordovaPlugin implements
     public boolean execute(final String action, final JSONArray args,
                            final CallbackContext callbackContext) {
 
-        if (action == null || !action.matches("getLocation|addWatch|clearWatch")) {
+        if (action == null || !action.matches("getPermission|getLocation|addWatch|clearWatch")) {
             return false;
         }
+
+        if (action.equals("getPermission")) {
+            if (hasPermisssion()) {
+                PluginResult r = new PluginResult(PluginResult.Status.OK);
+                callbackContext.sendPluginResult(r);
+
+                return true;
+            } else {
+                mCbContext = callbackContext;
+                requestPermissions(LOCATION_PERMISSION_REQUEST);
+            }
+
+            return true;
+        }
+
 
         final String id = args.optString(0, "");
         final boolean highAccuracy = args.optBoolean(1, false);
