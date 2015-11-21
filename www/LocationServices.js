@@ -95,7 +95,7 @@ function createTimeout(errorCallback, timeout) {
   return t;
 }
 
-var LocationServices = {
+var LocationServicesWithoutPermission = {
   lastPosition: null, // reference to last known (cached) position returned
   /**
    * Asynchronously acquires the current position.
@@ -131,7 +131,7 @@ var LocationServices = {
         velocity: p.velocity,
         altitudeAccuracy: p.altitudeAccuracy
       }, (p.timestamp === undefined ? new Date() : ((p.timestamp instanceof Date) ? p.timestamp : new Date(p.timestamp))));
-      LocationServices.lastPosition = pos;
+      LocationServicesWithoutPermission.lastPosition = pos;
       successCallback(pos);
     };
     var fail = function(e) {
@@ -145,8 +145,8 @@ var LocationServices = {
 
     // Check our cached position, if its timestamp difference with current time is less than the maximumAge, then just
     // fire the success callback with the cached position.
-    if (LocationServices.lastPosition && options.maximumAge && (((new Date()).getTime() - LocationServices.lastPosition.timestamp.getTime()) <= options.maximumAge)) {
-      successCallback(LocationServices.lastPosition);
+    if (LocationServicesWithoutPermission.lastPosition && options.maximumAge && (((new Date()).getTime() - LocationServicesWithoutPermission.lastPosition.timestamp.getTime()) <= options.maximumAge)) {
+      successCallback(LocationServicesWithoutPermission.lastPosition);
     // If the cached position check failed and the timeout was set to 0, error out with a TIMEOUT error object.
     } else if (options.timeout === 0) {
       fail({
@@ -186,7 +186,7 @@ var LocationServices = {
     var id = utils.createUUID();
 
     // Tell device to get a position ASAP, and also retrieve a reference to the timeout timer generated in getCurrentPosition
-    timers[id] = LocationServices.getCurrentPosition(successCallback, errorCallback, options);
+    timers[id] = LocationServicesWithoutPermission.getCurrentPosition(successCallback, errorCallback, options);
 
     var fail = function(e) {
       clearTimeout(timers[id].timer);
@@ -210,7 +210,7 @@ var LocationServices = {
         velocity: p.velocity,
         altitudeAccuracy: p.altitudeAccuracy
       }, (p.timestamp === undefined ? new Date() : ((p.timestamp instanceof Date) ? p.timestamp : new Date(p.timestamp))));
-      LocationServices.lastPosition = pos;
+      LocationServicesWithoutPermission.lastPosition = pos;
       successCallback(pos);
     };
 
@@ -232,7 +232,34 @@ var LocationServices = {
   }
 };
 
-LocationServices.priorities = {
+var LocationServices = {
+
+  getCurrentPosition: function(successCallback, errorCallback, options) {
+    var win = function() {
+      LocationServicesWithoutPermission.getCurrentPosition(successCallback, errorCallback, options);
+    };
+
+    exec(win, errorCallback, 'LocationServices', 'getPermission', []);
+  },
+
+  watchPosition: function(success, error, args) {
+    var win = function() {
+      LocationServicesWithoutPermission.watchPosition(successCallback, errorCallback, options);
+    };
+
+    exec(win, errorCallback, 'LocationServices', 'getPermission', []);
+  },
+
+  clearWatch: function(success, error, args) {
+    var win = function() {
+      LocationServicesWithoutPermission.clearWatch(successCallback, errorCallback, options);
+    };
+
+    exec(win, errorCallback, 'LocationServices', 'getPermission', []);
+  }
+};
+
+LocationServicesWithoutPermission.priorities = {
   PRIORITY_HIGH_ACCURACY: PRIORITY_HIGH_ACCURACY,
   PRIORITY_BALANCED_POWER_ACCURACY: PRIORITY_BALANCED_POWER_ACCURACY,
   PRIORITY_LOW_POWER: PRIORITY_LOW_POWER,
