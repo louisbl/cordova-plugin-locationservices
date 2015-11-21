@@ -20,6 +20,10 @@
 -->
 # Release Notes
 
+### 2.0.0 (Nov 21, 2015)
+* Add support for runtime permissions on Android >= 6
+* Remove objects from global, use cordova.plugins.locationServices.*
+
 ### 1.2.0 (Nov 12, 2015)
 * Update Google Play Services to v7.8
 
