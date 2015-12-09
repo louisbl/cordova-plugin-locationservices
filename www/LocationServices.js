@@ -242,7 +242,7 @@ var LocationServices = {
     exec(win, errorCallback, 'LocationServices', 'getPermission', []);
   },
 
-  watchPosition: function(success, error, args) {
+  watchPosition: function(successCallback, errorCallback, args) {
     var win = function() {
       LocationServicesWithoutPermission.watchPosition(successCallback, errorCallback, options);
     };
@@ -250,7 +250,7 @@ var LocationServices = {
     exec(win, errorCallback, 'LocationServices', 'getPermission', []);
   },
 
-  clearWatch: function(success, error, args) {
+  clearWatch: function(successCallback, errorCallback, args) {
     var win = function() {
       LocationServicesWithoutPermission.clearWatch(successCallback, errorCallback, options);
     };
