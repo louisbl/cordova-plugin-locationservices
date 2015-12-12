@@ -53,11 +53,33 @@ see the Privacy Guide.
 
 The plugin is published on [npm](https://www.npmjs.com/package/cordova-plugin-locationservices):
 
-    cordova plugin add cordova-plugin-locationservices
+    cordova plugin add cordova-plugin-locationservices@1.2.0
 
-If you wish to use the old Cordova registry, use [v0.2.2](https://github.com/louisbl/cordova-plugin-locationservices/tree/0.2.2) and the previous plugin id:
+If you use Cordova Android platform >= 5
+
+    cordova plugin add cordova-plugin-locationservices@2.0.1
+
+If you use the old Cordova registry, use [v0.2.2](https://github.com/louisbl/cordova-plugin-locationservices/tree/0.2.2) and the previous plugin id:
 
     cordova plugin add fr.louisbl.cordova.locationservices
+
+### Google play services version
+
+This plugin use the latest available Google Location services release.
+
+If you want to use a specific version, add a [build-extras.gradle](http://cordova.apache.org/docs/en/latest/guide/platforms/android/tools.html) file:
+
+```gradle
+ext.postBuildExtras = {
+  configurations.all {
+    resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+      def dep = details.requested.group + ":" + details.requested.name
+      if (dep == 'com.google.android.gms:play-services-location')
+        details.useVersion '8.3.0'
+    }
+  }
+}
+```
 
 ## Supported Platforms
 
