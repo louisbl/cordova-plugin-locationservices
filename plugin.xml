@@ -21,7 +21,7 @@
 <plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
 xmlns:android="http://schemas.android.com/apk/res/android"
            id="cordova-plugin-locationservices"
-      version="2.0.0">
+      version="2.0.1">
 
     <name>Google Location Services for Cordova - Android</name>
     <description>Android geolocation plugin using Google Play Services Location API.</description>
@@ -36,7 +36,7 @@ xmlns:android="http://schemas.android.com/apk/res/android"
 
     <!-- android -->
     <platform name="android">
-        <framework src="com.google.android.gms:play-services-location:7.8.0" />
+        <framework src="com.google.android.gms:play-services-location:+" />
 
         <js-module src="www/Coordinates.js" name="Coordinates">
             <clobbers target="cordova.plugins.locationServices.Coordinates" />
