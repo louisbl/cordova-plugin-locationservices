@@ -80,6 +80,10 @@ ext.postBuildExtras = {
   }
 }
 ```
+### Tests
+The plugin use the [Cordova Plugin Test Framework](https://github.com/apache/cordova-plugin-test-framework) and tests based on the [Cordova Geolocation Plugin](https://www.npmjs.com/package/cordova-plugin-geolocation).
+
+Clone the [test app](https://github.com/louisbl/cordova-plugin-locationservices-tests) and run it on a device/emulator.
 
 ## Supported Platforms
 

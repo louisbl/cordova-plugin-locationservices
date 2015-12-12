@@ -20,6 +20,12 @@
 -->
 # Release Notes
 
+### 2.0.1 (Dec 12, 2015)
+* Fix broken watch/clear Position
+* Remove Google Play Services version constraint
+
+Thanks @cvaliere
+
 ### 2.0.0 (Nov 21, 2015)
 * Add support for runtime permissions on Android >= 6
 * Remove objects from global, use cordova.plugins.locationServices.*
