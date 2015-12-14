@@ -277,7 +277,7 @@ Contains `cordova.plugins.locationServices.Position` coordinates and timestamp, 
 
 - __coords__: A set of geographic coordinates. _(Coordinates)_
 
-- __timestamp__: Creation timestamp for `coords`. _(Date)_
+- __timestamp__: Creation timestamp for `coords`. _(DOMTimeStamp)_
 
 ## Coordinates
 

@@ -130,7 +130,7 @@ var LocationServicesWithoutPermission = {
         heading: p.heading,
         velocity: p.velocity,
         altitudeAccuracy: p.altitudeAccuracy
-      }, (p.timestamp === undefined ? new Date() : ((p.timestamp instanceof Date) ? p.timestamp : new Date(p.timestamp))));
+      }, p.timestamp);
       LocationServicesWithoutPermission.lastPosition = pos;
       successCallback(pos);
     };
@@ -209,7 +209,7 @@ var LocationServicesWithoutPermission = {
         heading: p.heading,
         velocity: p.velocity,
         altitudeAccuracy: p.altitudeAccuracy
-      }, (p.timestamp === undefined ? new Date() : ((p.timestamp instanceof Date) ? p.timestamp : new Date(p.timestamp))));
+      }, p.timestamp);
       LocationServicesWithoutPermission.lastPosition = pos;
       successCallback(pos);
     };
