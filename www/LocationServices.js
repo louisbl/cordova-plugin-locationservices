@@ -145,7 +145,7 @@ var LocationServicesWithoutPermission = {
 
     // Check our cached position, if its timestamp difference with current time is less than the maximumAge, then just
     // fire the success callback with the cached position.
-    if (LocationServicesWithoutPermission.lastPosition && options.maximumAge && (((new Date()).getTime() - LocationServicesWithoutPermission.lastPosition.timestamp.getTime()) <= options.maximumAge)) {
+    if (LocationServicesWithoutPermission.lastPosition && options.maximumAge && ((Date.now() - LocationServicesWithoutPermission.lastPosition.timestamp) <= options.maximumAge)) {
       successCallback(LocationServicesWithoutPermission.lastPosition);
     // If the cached position check failed and the timeout was set to 0, error out with a TIMEOUT error object.
     } else if (options.timeout === 0) {
