@@ -179,11 +179,11 @@ var LocationServicesWithoutPermission = {
    * @param {PositionOptions} options     The options for getting the location data such as frequency. (OPTIONAL)
    * @return String                       The watch id that must be passed to #clearWatch to stop watching.
    */
-  watchPosition: function(successCallback, errorCallback, options) {
+  watchPosition: function(successCallback, errorCallback, options, watch_id) {
     argscheck.checkArgs('fFO', 'LocationServices.getCurrentPosition', arguments);
     options = parseParameters(options);
 
-    var id = utils.createUUID();
+    var id = watch_id ? watch_id : utils.createUUID();
 
     // Tell device to get a position ASAP, and also retrieve a reference to the timeout timer generated in getCurrentPosition
     timers[id] = LocationServicesWithoutPermission.getCurrentPosition(successCallback, errorCallback, options);
@@ -243,11 +243,13 @@ var LocationServices = {
   },
 
   watchPosition: function(successCallback, errorCallback, options) {
+    var watch_id = utils.createUUID();
     var win = function() {
-      LocationServicesWithoutPermission.watchPosition(successCallback, errorCallback, options);
+      LocationServicesWithoutPermission.watchPosition(successCallback, errorCallback, options, watch_id);
     };
 
     exec(win, errorCallback, 'LocationServices', 'getPermission', []);
+    return watch_id;
   },
 
   clearWatch: function(successCallback, errorCallback, options) {
