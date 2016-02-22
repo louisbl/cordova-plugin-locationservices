@@ -20,6 +20,12 @@
 -->
 # Release Notes
 
+### 2.1.0 (Feb 22, 2016)
+* Fix bug with undefined watchId
+* Position.timestamp is now a Number
+
+Thanks @chemerisuk and @flexarts
+
 ### 2.0.1 (Dec 12, 2015)
 * Fix broken watch/clear Position
 * Remove Google Play Services version constraint
