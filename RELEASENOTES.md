@@ -20,6 +20,11 @@
 -->
 # Release Notes
 
+### 1.3.0 (Feb 22, 2016)
+* Position.timestamp is now a Number
+
+Thanks @chemerisuk
+
 ### 1.2.0 (Nov 12, 2015)
 * Update Google Play Services to v7.8
 

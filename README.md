@@ -21,43 +21,23 @@
 
 # Google Location Services for Cordova - Android
 
-This plugin provides information about the device's location, such as
-latitude and longitude. Common sources of location information include
-Global Positioning System (GPS) and location inferred from network
-signals such as IP address, RFID, WiFi and Bluetooth MAC addresses,
-and GSM/CDMA cell IDs. There is no guarantee that the API returns the
-device's actual location.
+This Cordova plugin provides information about the device's location, such as
+latitude and longitude and uses the [Google Play services location APIs](https://developers.google.com/android/reference/com/google/android/gms/location/package-summary).
 
-This API is based on the
-[W3C Geolocation API Specification](http://dev.w3.org/geo/api/spec-source.html),
-and use the Google Play Services Location API.
+This  plugin exists mainly because the [cordova geolocation plugin](http://plugins.cordova.io/#/package/org.apache.cordova.geolocation) does not use Android code anymore : https://issues.apache.org/jira/browse/CB-5977.
+It relies on the geolocation capability of the WebView.
 
-__WARNING__: Collection and use of geolocation data
-raises important privacy issues.  Your app's privacy policy should
-discuss how the app uses geolocation data, whether it is shared with
-any other parties, and the level of precision of the data (for
-example, coarse, fine, ZIP code level, etc.).  Geolocation data is
-generally considered sensitive because it can reveal user's
-whereabouts and, if stored, the history of their travels.
-Therefore, in addition to the app's privacy policy, you should
-strongly consider providing a just-in-time notice before the app
-accesses geolocation data (if the device operating system doesn't do
-so already).  That notice should provide the same information noted
-above, as well as obtaining the user's permission (e.g., by presenting
-choices for __OK__ and __No Thanks__).  For more information, please
-see the Privacy Guide.
+Depending on your particular needs, this plugin may be more suitable.
 
 ## Installation
+
+:warning: This version is for Cordova Android Platform 4, for the latest release check the `master` branch.
 
 [Add the Android Support and Google Repository](https://developer.android.com/tools/support-library/setup.html).
 
 The plugin is published on [npm](https://www.npmjs.com/package/cordova-plugin-locationservices):
 
-    cordova plugin add cordova-plugin-locationservices
-
-If you wish to use the old Cordova registry, use [v0.2.2](https://github.com/louisbl/cordova-plugin-locationservices/tree/0.2.2) and the previous plugin id:
-
-    cordova plugin add fr.louisbl.cordova.locationservices
+    cordova plugin add cordova-plugin-locationservices@legacy
 
 ## Supported Platforms
 
@@ -251,7 +231,7 @@ Contains `cordova.plugins.locationServices.Position` coordinates and timestamp, 
 
 - __coords__: A set of geographic coordinates. _(Coordinates)_
 
-- __timestamp__: Creation timestamp for `coords`. _(Date)_
+- __timestamp__: Creation timestamp for `coords`. _(DOMTimestamp)_
 
 ## Coordinates
 
