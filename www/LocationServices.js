@@ -130,7 +130,7 @@ var LocationServices = {
 				heading: p.heading,
 				velocity: p.velocity,
 				altitudeAccuracy: p.altitudeAccuracy
-			}, (p.timestamp === undefined ? new Date() : ((p.timestamp instanceof Date) ? p.timestamp : new Date(p.timestamp))));
+			}, p.timestamp);
 			LocationServices.lastPosition = pos;
 			successCallback(pos);
 		};
@@ -145,7 +145,7 @@ var LocationServices = {
 
 		// Check our cached position, if its timestamp difference with current time is less than the maximumAge, then just
 		// fire the success callback with the cached position.
-		if (LocationServices.lastPosition && options.maximumAge && (((new Date()).getTime() - LocationServices.lastPosition.timestamp.getTime()) <= options.maximumAge)) {
+		if (LocationServices.lastPosition && options.maximumAge && ((Date.now() - LocationServices.lastPosition.timestamp) <= options.maximumAge)) {
 			successCallback(LocationServices.lastPosition);
 			// If the cached position check failed and the timeout was set to 0, error out with a TIMEOUT error object.
 		} else if (options.timeout === 0) {
