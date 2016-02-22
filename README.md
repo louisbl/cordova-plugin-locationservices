@@ -24,7 +24,7 @@
 This Cordova plugin provides information about the device's location, such as
 latitude and longitude and uses the [Google Play services location APIs](https://developers.google.com/android/reference/com/google/android/gms/location/package-summary).
 
-This  plugin exists mainly because the [cordova geolocation plugin](http://plugins.cordova.io/#/package/org.apache.cordova.geolocation) does not use Android code anymore : https://issues.apache.org/jira/browse/CB-5977.
+This  plugin exists mainly because the [cordova geolocation plugin](https://www.npmjs.com/package/cordova-plugin-geolocation) does not use Android code anymore : https://issues.apache.org/jira/browse/CB-5977.
 It relies on the geolocation capability of the WebView.
 
 Depending on your particular needs, this plugin may be more suitable.
@@ -37,7 +37,7 @@ The plugin is published on [npm](https://www.npmjs.com/package/cordova-plugin-lo
 
     cordova plugin add cordova-plugin-locationservices
 
-If you use Cordova Android platform 4
+If you use Cordova Android platform 4, check the `v1` branch.
 
     cordova plugin add cordova-plugin-locationservices@legacy
 
