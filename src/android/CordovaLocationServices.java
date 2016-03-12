@@ -25,6 +25,7 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.Log;
 
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -230,6 +231,13 @@ public class CordovaLocationServices extends CordovaPlugin implements
                             : null) : null));
             o.put("velocity", loc.getSpeed());
             o.put("timestamp", loc.getTime());
+            boolean mocked = false;
+            if (Build.VERSION.SDK_INT >= 18) {
+                mocked = loc.isFromMockProvider();
+            } else {
+                mocked = Settings.Secure.getString(cordova.getActivity().getApplicationContext().getContentResolver(), Settings.Secure.ALLOW_MOCK_LOCATION).equals("0");
+            }
+            o.put("mocked", mocked);
         } catch (JSONException e) {
             e.printStackTrace();
         }
