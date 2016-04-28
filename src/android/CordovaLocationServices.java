@@ -235,7 +235,7 @@ public class CordovaLocationServices extends CordovaPlugin implements
             if (Build.VERSION.SDK_INT >= 18) {
                 mocked = loc.isFromMockProvider();
             } else {
-                mocked = Settings.Secure.getString(cordova.getActivity().getApplicationContext().getContentResolver(), Settings.Secure.ALLOW_MOCK_LOCATION).equals("0");
+                mocked = !Settings.Secure.getString(cordova.getActivity().getApplicationContext().getContentResolver(), Settings.Secure.ALLOW_MOCK_LOCATION).equals("0");
             }
             o.put("mocked", mocked);
         } catch (JSONException e) {
