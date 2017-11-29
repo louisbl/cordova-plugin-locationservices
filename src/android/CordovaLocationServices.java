@@ -102,8 +102,6 @@ public class CordovaLocationServices extends CordovaPlugin implements
 
             mCbContext.sendPluginResult(result);
         }
-
-        mCbContext = null;
     }
 
     @Override
