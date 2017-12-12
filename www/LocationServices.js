@@ -129,7 +129,8 @@ var LocationServicesWithoutPermission = {
         accuracy: p.accuracy,
         heading: p.heading,
         velocity: p.velocity,
-        altitudeAccuracy: p.altitudeAccuracy
+        altitudeAccuracy: p.altitudeAccuracy,
+        mocked: p.mocked
       }, p.timestamp);
       LocationServicesWithoutPermission.lastPosition = pos;
       successCallback(pos);
@@ -208,7 +209,8 @@ var LocationServicesWithoutPermission = {
         accuracy: p.accuracy,
         heading: p.heading,
         velocity: p.velocity,
-        altitudeAccuracy: p.altitudeAccuracy
+        altitudeAccuracy: p.altitudeAccuracy,
+        mocked: p.mocked
       }, p.timestamp);
       LocationServicesWithoutPermission.lastPosition = pos;
       successCallback(pos);

@@ -28,9 +28,10 @@
  * @param {Object} head
  * @param {Object} vel
  * @param {Object} altacc
+ * @param {Object} mocked
  * @constructor
  */
-var Coordinates = function(lat, lng, alt, acc, head, vel, altacc) {
+var Coordinates = function(lat, lng, alt, acc, head, vel, altacc, mocked) {
   /**
    * The latitude of the position.
    */
@@ -64,6 +65,11 @@ var Coordinates = function(lat, lng, alt, acc, head, vel, altacc) {
    * The altitude accuracy of the position.
    */
   this.altitudeAccuracy = (altacc !== undefined) ? altacc : null;
+  
+  /**
+   * If the position was mocked
+   */
+  this.mocked = (mocked !== undefined) ? mocked : null;
 };
 
 module.exports = Coordinates;

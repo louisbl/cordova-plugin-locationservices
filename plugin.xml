@@ -36,7 +36,8 @@ xmlns:android="http://schemas.android.com/apk/res/android"
 
     <!-- android -->
     <platform name="android">
-        <framework src="com.google.android.gms:play-services-location:+" />
+        <preference name="GMS_VERSION" default="11.0.1"/>
+        <framework src="com.google.android.gms:play-services-location:$GMS_VERSION" />
 
         <js-module src="www/Coordinates.js" name="Coordinates">
             <clobbers target="cordova.plugins.locationServices.Coordinates" />
