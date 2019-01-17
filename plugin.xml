@@ -21,17 +21,18 @@
 <plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
 xmlns:android="http://schemas.android.com/apk/res/android"
            id="cordova-plugin-locationservices"
-      version="2.2.0">
+      version="3.0.0">
 
     <name>Google Location Services for Cordova - Android</name>
     <description>Android geolocation plugin using Google Play Services Location API.</description>
     <license>Apache 2.0</license>
     <keywords>cordova,geolocation,google-play-services</keywords>
-    <repo>https://github.com/louisbl/cordova-plugin-locationservices</repo>
-    <issue>https://github.com/louisbl/cordova-plugin-locationservices/issues</issue>
+    <repo>https://github.com/txlopes/cordova-plugin-locationservices</repo>
+    <issue>https://github.com/txlopes/cordova-plugin-locationservices/issues</issue>
 
     <engines>
-        <engine name="cordova-android" version=">=5.0.0-dev" />
+        <engine name="cordova-android" version=">=6.3.0" />
+        <engine name="cordova-ios" version=">=4.5.4" />
     </engines>
 
     <!-- android -->
@@ -75,6 +76,35 @@ xmlns:android="http://schemas.android.com/apk/res/android"
         <source-file src="src/android/ErrorDialogFragment.java" target-dir="src/fr/louisbl/cordova/locationservices" />
         <source-file src="src/android/GApiUtils.java" target-dir="src/fr/louisbl/cordova/locationservices" />
         <source-file src="src/android/LocationUtils.java" target-dir="src/fr/louisbl/cordova/locationservices" />
-
+    </platform>
+    <!-- ios -->
+    <platform name="ios">
+        <js-module src="www/Coordinates.js" name="Coordinates">
+            <clobbers target="cordova.plugins.locationServices.Coordinates" />
+            <clobbers target="plugin.locationServices.Coordinates" />
+        </js-module>
+        <js-module src="www/PositionError.js" name="PositionError">
+            <clobbers target="cordova.plugins.locationServices.PositionError" />
+            <clobbers target="plugin.locationServices.PositionError" />
+        </js-module>
+        <js-module src="www/Position.js" name="Position">
+            <clobbers target="cordova.plugins.locationServices.PositionError" />
+            <clobbers target="plugin.locationServices.PositionError" />
+        </js-module>
+        <js-module src="www/LocationServices.js" name="LocationServices">
+            <clobbers target="cordova.plugins.locationServices.geolocation" />
+            <clobbers target="plugin.locationServices.geolocation" />
+        </js-module>
+        <config-file target="config.xml" parent="/*">
+            <feature name="LocationServices">
+                <param name="ios-package" value="CDVLocation"/>
+            </feature>
+        </config-file>
+        <config-file parent="NSLocationWhenInUseUsageDescription" target="*-Info.plist">
+            <string>Permissão necessária para utilizar a geolocalização</string>
+        </config-file>
+        <header-file src="src/ios/CDVLocation.h" />
+        <source-file src="src/ios/CDVLocation.m" />
+        <framework src="CoreLocation.framework" />
     </platform>
 </plugin>
