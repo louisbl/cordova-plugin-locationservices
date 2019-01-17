@@ -53,6 +53,7 @@ typedef NSUInteger CDVLocationStatus;
 @property (nonatomic, strong) CDVLocationData* locationData;
 
 - (void)getLocation:(CDVInvokedUrlCommand*)command;
+- (void)getPermission:(CDVInvokedUrlCommand*)command;
 - (void)addWatch:(CDVInvokedUrlCommand*)command;
 - (void)clearWatch:(CDVInvokedUrlCommand*)command;
 - (void)returnLocationInfo:(NSString*)callbackId andKeepCallback:(BOOL)keepCallback;
